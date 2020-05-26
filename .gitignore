@@ -1,0 +1,4 @@
+*.elf
+*.hex
+node_modules/
+StandardFirmata/
