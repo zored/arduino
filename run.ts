@@ -18,11 +18,11 @@ const commands = new Commands({
   fmt,
   hooks,
   flash: async (args) => {
-    const name = args._[0] || '';
+    const name = args._[0] || "";
     switch (name) {
-      case '':
-        throw new Error("Specify sketch name!")
-      case 'Firmata':
+      case "":
+        throw new Error("Specify sketch name!");
+      case "Firmata":
         await new Firmata().download(name);
     }
     const sketch = new ArduinoSketch(`sketch/${name}`);
