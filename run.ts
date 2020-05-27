@@ -17,9 +17,18 @@ const hooks = (args: Args) => gitHooks.run(args);
 const commands = new Commands({
   fmt,
   hooks,
-  flash: async () => {
+  flashFirmata: async () => {
     await new Firmata().download();
     const sketch = new ArduinoSketch(Firmata.sketch);
+    await sketch.compile();
+    await sketch.flash();
+  },
+  flash: async (args) => {
+    const [name] = args._;
+    if (!name) {
+      throw new Error("Specify sketch name!");
+    }
+    const sketch = new ArduinoSketch(`sketch/${name}`);
     await sketch.compile();
     await sketch.flash();
   },

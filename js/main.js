@@ -1,6 +1,6 @@
-const {Led, Board} = require("johnny-five");
+const {Led, Board, Sensor} = require("johnny-five");
 
-const main = () => new AnalogPinBoard().run();
+const main = () => new InputAnalogLedBoard().run();
 
 class RootBoard {
   constructor() {
@@ -25,6 +25,7 @@ class LedBoard extends RootBoard {
 
   ready() {
     this.led = new Led(this.ledPin);
+    super.ready();
   }
 
   exit() {
@@ -39,17 +40,69 @@ class BlinkBoard extends LedBoard {
   }
 }
 
-class AnalogPinBoard extends LedBoard {
+class AnalogLedBoard extends LedBoard {
   constructor(analogLedPin = 9) {
     super(analogLedPin)
   }
 
   ready() {
     super.ready();
-    
-    const blink = () => this.led.fadeIn(1000, () => setTimeout(() => this.led.fadeOut(1000, blink), 1000));
-    blink();
+    this.startLed()
+  }
+
+  startLed() {
+    const f = () => this.led.fadeIn(1000, () => setTimeout(() => this.led.fadeOut(1000, f), 1000));
+    f();
+  }
+
+  exit() {
+    super.exit();
   }
 }
 
+class InputAnalogLedBoard extends AnalogLedBoard {
+  constructor() {
+    super();
+    this.logger = new IntervalLogger();
+  }
+
+  ready() {
+    this.sensor = new Sensor("A1")
+    super.ready()
+  }
+
+  startLed () {
+    this.sensor.on('data', () => this.onSensorData());
+  }
+
+  onSensorData() {
+    const brightness = this.sensor.scaleTo(0, 255);
+    this.logger.log(brightness);
+    this.led.brightness(brightness);
+  }
+
+  exit() {
+    super.exit();
+  }
+}
+
+class IntervalLogger {
+  constructor() {
+    this.last = new Date()
+    this.values = [];
+  }
+  log(value) {
+    const now = new Date()
+    this.values.push(value);
+    if (now.getTime() - this.last.getTime() < 1000) {
+      return;
+    }
+
+    const sum = this.values.reduce((sum, value) => sum + value, 0);
+    const average = sum / this.values.length;
+    console.log(average);
+    this.values = [];
+    this.last = now;
+  }
+}
 main();
