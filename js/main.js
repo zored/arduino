@@ -1,31 +1,69 @@
-const {Led, Board, Sensor} = require("johnny-five");
+const {Led, Board, Sensor, Piezo, Button} = require("johnny-five");
 
-const main = () => new InputAnalogLedBoard().run();
+const pins = {
+  button: 7,
+}
+const main = () => {
+  const piezoFlow = new PeizoFlow();
+  new MyBoard().run(new AllFlow([
+    piezoFlow,
+    new AnalogLedFlow(),
+    new ButtonFlow(() => piezoFlow.playMusic()),
+  ]))
+}
 
-class RootBoard {
-  constructor() {
-    this.board = new Board({repl: false});
+class AllFlow {
+  constructor(flows) {
+    this.flows = flows
   }
-  ready() {}
-  exit() {}
 
-  run() {
-    this.board.on("ready", () => {
-      this.ready()
-      this.board.on("exit", () => this.exit());
+  ready() {
+    this.flows.forEach(f => f.ready && f.ready());
+  }
+
+  exit() {
+    this.flows.forEach(f => f.exit && f.exit());
+  }
+}
+
+class ButtonFlow {
+  constructor(callback) {
+    this.callback = callback;
+  }
+  ready() {
+    new Button(pins.button).on("up", () => this.callback())
+  }
+}
+
+class PeizoFlow {
+  constructor(piezoPin = 3) {
+    this.piezoPin = piezoPin;
+  }
+
+  ready() {
+    this.piezo = new Piezo(this.piezoPin);
+    this.playMusic();
+  }
+
+  playMusic() {
+    if (this.piezo.isPlaying) {
+      return;
+    }
+    this.piezo.play({
+      song: "CEFG--CEFG--CEFG-E-C-E-D-".split('').join(' '),
+      beats: 1 / 2,
+      tempo: 100
     });
   }
 }
 
-class LedBoard extends RootBoard {
+class LedFlow {
   constructor(ledPin = 13) {
-    super();
     this.ledPin = ledPin;
   }
 
   ready() {
     this.led = new Led(this.ledPin);
-    super.ready();
   }
 
   exit() {
@@ -33,14 +71,14 @@ class LedBoard extends RootBoard {
   }
 }
 
-class BlinkBoard extends LedBoard {
+class BlinkFlow extends LedFlow {
   ready() {
     super.ready()
     this.led.blink(1000);
   }
 }
 
-class AnalogLedBoard extends LedBoard {
+class AnalogLedFlow extends LedFlow {
   constructor(analogLedPin = 9) {
     super(analogLedPin)
   }
@@ -60,7 +98,7 @@ class AnalogLedBoard extends LedBoard {
   }
 }
 
-class InputAnalogLedBoard extends AnalogLedBoard {
+class SensorLedFlow extends AnalogLedFlow {
   constructor() {
     super();
     this.logger = new IntervalLogger();
@@ -103,6 +141,19 @@ class IntervalLogger {
     console.log(average);
     this.values = [];
     this.last = now;
+  }
+}
+
+class MyBoard {
+  constructor() {
+    this.board = new Board({repl: false})
+  }
+
+  run(flow) {
+    this.board.on("ready", () => {
+      flow.ready();
+      this.board.on("exit", () => flow.exit());
+    });
   }
 }
 main();

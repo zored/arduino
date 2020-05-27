@@ -17,16 +17,13 @@ const hooks = (args: Args) => gitHooks.run(args);
 const commands = new Commands({
   fmt,
   hooks,
-  flashFirmata: async () => {
-    await new Firmata().download();
-    const sketch = new ArduinoSketch(Firmata.sketch);
-    await sketch.compile();
-    await sketch.flash();
-  },
   flash: async (args) => {
-    const [name] = args._;
-    if (!name) {
-      throw new Error("Specify sketch name!");
+    const name = args._[0] || '';
+    switch (name) {
+      case '':
+        throw new Error("Specify sketch name!")
+      case 'Firmata':
+        await new Firmata().download(name);
     }
     const sketch = new ArduinoSketch(`sketch/${name}`);
     await sketch.compile();
@@ -55,10 +52,9 @@ class ArduinoSketch {
 }
 
 class Firmata {
-  public static readonly sketch = "sketch/StandardFirmata";
-  async download(): Promise<void> {
-    const dir = Firmata.sketch;
-    const file = `${dir}/StandardFirmata.ino`;
+  async download(name: string): Promise<void> {
+    const dir = `sketch/${name}`;
+    const file = `${dir}/${name}.ino`;
     const exists = async (f: string) => {
       try {
         await lstat(file);
