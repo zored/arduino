@@ -1,15 +1,95 @@
-const {Led, Board, Sensor, Piezo, Button} = require("johnny-five");
+const {
+  Led,
+  Board,
+  Sensor,
+  Piezo,
+  Button,
+  Pin,
+} = require("johnny-five");
+const execa = require("execa");
+
+const main = () => {
+  const macBook = new MacBook();
+  const digitFlow = new DigitFlow();
+
+  new MyBoard().run(new AllFlow([
+    new SensorFlow(sensor => {
+      macBook.setVolume(sensor.scaleTo(0, 60))
+    }),
+    new SensorFlow(
+      sensor => digitFlow.counter?.setValue(sensor.scaleTo(0, 9)), 
+      pins.lightSensor,
+    ),
+    new ButtonFlow(() => macBook.toggleMusic()),
+    digitFlow,
+    new BlinkFlow(),
+    new AnalogLedFlow(pins.led9),
+  ]))
+}
 
 const pins = {
-  button: 7,
+  button: 4,
+  led: 3,
+  led9: 9,
+  sensor: 'A0',
+  lightSensor: 'A1',
+  piezo: 0,
+  register: {
+    data: 13,
+    clock: 12,
+    latch: 11,
+  },
+  counter4026: {
+    clock: 5,
+    reset: 6,
+  }
+};
+
+class DigitFlow {
+  ready() {
+    this.counter = new Counter4026();
+  }
+  exit() {
+    this.counter.setValue(8)
+  }
 }
-const main = () => {
-  const piezoFlow = new PeizoFlow();
-  new MyBoard().run(new AllFlow([
-    piezoFlow,
-    new AnalogLedFlow(),
-    new ButtonFlow(() => piezoFlow.playMusic()),
-  ]))
+class RateLimit {
+  constructor(ms = 1000) {
+    this.ms = ms
+  }
+
+  call(f) {
+    const now = new Date()
+    if (this.date && now.getTime() - this.date.getTime() < this.ms) {
+      return;
+    }
+    f();
+    this.date = now;
+  }
+}
+
+class MacBook {
+  setVolume(v) {
+    if (this.volume === v) {
+      return;
+    }
+    this.volume = v;
+    console.log(`volume set to ${v}`)
+    execa.sync('/usr/local/bin/m', ['volume', v])
+  }
+  toggleMusic() {
+    execa.sync(`osascript`, ['-l', 'JavaScript', '-e', `
+      const music = Application("Music");
+      switch (music.playerState()) {
+        case 'paused':
+          music.play();
+          break;
+        default:
+          music.pause();
+          break;
+      }
+  `])
+  }
 }
 
 class AllFlow {
@@ -36,7 +116,7 @@ class ButtonFlow {
 }
 
 class PeizoFlow {
-  constructor(piezoPin = 3) {
+  constructor(piezoPin = pins.piezo) {
     this.piezoPin = piezoPin;
   }
 
@@ -58,7 +138,7 @@ class PeizoFlow {
 }
 
 class LedFlow {
-  constructor(ledPin = 13) {
+  constructor(ledPin = pins.led) {
     this.ledPin = ledPin;
   }
 
@@ -79,7 +159,7 @@ class BlinkFlow extends LedFlow {
 }
 
 class AnalogLedFlow extends LedFlow {
-  constructor(analogLedPin = 9) {
+  constructor(analogLedPin = pins.led) {
     super(analogLedPin)
   }
 
@@ -98,29 +178,16 @@ class AnalogLedFlow extends LedFlow {
   }
 }
 
-class SensorLedFlow extends AnalogLedFlow {
-  constructor() {
-    super();
+class SensorFlow {
+  constructor(callback = (sensor) => {}, pin = pins.sensor) {
+    this.pin = pin
     this.logger = new IntervalLogger();
+    this.callback = callback
   }
 
   ready() {
-    this.sensor = new Sensor("A1")
-    super.ready()
-  }
-
-  startLed () {
-    this.sensor.on('data', () => this.onSensorData());
-  }
-
-  onSensorData() {
-    const brightness = this.sensor.scaleTo(0, 255);
-    this.logger.log(brightness);
-    this.led.brightness(brightness);
-  }
-
-  exit() {
-    super.exit();
+    this.sensor = new Sensor(this.pin)
+    this.sensor.on('change', () => this.callback(this.sensor));
   }
 }
 
@@ -146,7 +213,9 @@ class IntervalLogger {
 
 class MyBoard {
   constructor() {
-    this.board = new Board({repl: false})
+    this.board = new Board({
+      repl: false
+    })
   }
 
   run(flow) {
@@ -156,4 +225,65 @@ class MyBoard {
     });
   }
 }
+
+
+Pin.prototype.highLow = function () {
+  this.high()
+  this.low()
+}
+
+class Counter4026 {
+  constructor(
+    clockPinValue = pins.counter4026.clock,
+    resetPinValue = pins.counter4026.reset,
+  ) {
+    this.clockPinValue = clockPinValue;
+    this.resetPinValue = resetPinValue;
+    this.n = 0;
+    this.started = false;
+  }
+
+  _start() {
+    if (this.started) {
+      return;
+    }
+    this.clockPin = new Pin(this.clockPinValue);
+    this.resetPin = new Pin(this.resetPinValue);
+    this.pins = [this.clockPin, this.resetPin];
+    this._reset();
+    this.started = true;
+  }
+
+  _reset() {
+    this.resetPin.highLow()
+    this.n = 0;
+  }
+
+  setValue(n = 0) {
+    this._start()
+    if (n > 9) {
+      n = 9
+    } else if (n < 0) {
+      n = 0
+    }
+
+    if (n === this.n) {
+      return
+    }
+
+    if (n < this.n) {
+      this._reset()
+    }
+
+    for (let i = this.n; i < n; i++) {
+      this._increment();
+    }
+  }
+
+  _increment() {
+    this.clockPin.highLow()
+    this.n++
+  }
+}
+
 main();
