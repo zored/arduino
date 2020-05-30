@@ -14,16 +14,19 @@ const main = () => {
 
   new MyBoard().run(new AllFlow([
     new SensorFlow(sensor => {
-      macBook.setVolume(sensor.scaleTo(0, 60))
+      // macBook.setVolume(sensor.scaleTo(0, 60))
     }),
     new SensorFlow(
-      sensor => digitFlow.counter?.setValue(sensor.scaleTo(0, 9)), 
+      sensor => {
+        digitFlow.counter.setValue(sensor.scaleTo(0, 9))
+        macBook.setVolume(sensor.scaleTo(0, 40))
+      },
       pins.lightSensor,
     ),
     new ButtonFlow(() => macBook.toggleMusic()),
     digitFlow,
     new BlinkFlow(),
-    new AnalogLedFlow(pins.led9),
+    new TrafficLightFlow(),
   ]))
 }
 
@@ -42,7 +45,8 @@ const pins = {
   counter4026: {
     clock: 5,
     reset: 6,
-  }
+  },
+  trafficLight: [8,12,13],
 };
 
 class DigitFlow {
@@ -283,6 +287,45 @@ class Counter4026 {
   _increment() {
     this.clockPin.highLow()
     this.n++
+  }
+}
+class TrafficLightFlow {
+  ready() {
+    this.lights = new TrafficLight(
+      pins.trafficLight.map(pin => new Pin(pin))
+    );
+    const options = [TrafficLight.red, TrafficLight.yellow, TrafficLight.green];
+    setInterval(() => {
+      const v = options.shift();
+      options.push(v);
+      console.log(v);
+      this.lights.on(v);
+    }, 2000);
+  }
+
+  exit() {
+    this.lights.off();
+  }
+}
+class TrafficLight {
+  static red = 0
+  static yellow = 1
+  static green = 2
+
+  constructor(pins) {
+    this.pins = pins
+  }
+
+  on(index = 0) {
+    this.pins.forEach((p, i) => {
+      return i === index 
+        ? p.high() 
+        : p.low();
+      })
+  }
+
+  off() {
+    this.on(-1)
   }
 }
 
