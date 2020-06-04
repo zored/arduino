@@ -4,24 +4,20 @@ import {
   Commands,
   GitHooks,
   Runner,
+  assertAllTracked,
 } from "https://raw.githubusercontent.com/zored/deno/v0.0.28/mod.ts";
-import { exec, OutputMode } from "https://deno.land/x/exec@0.0.5/mod.ts";
-const { mkdir, writeTextFile, lstat } = Deno;
-const fmt = () => new Runner().run(`deno fmt ./run.ts`);
+import { Firmata, Espruino, ArduinoSketch } from "./deno/lib.ts";
+const fmt = () => new Runner().run(`deno fmt ./run.ts ./deno`);
 
 const gitHooks = new GitHooks({
-  "pre-commit": fmt,
+  "pre-commit": async () => {
+    await assertAllTracked();
+    await fmt();
+  },
 });
 const hooks = (args: Args) => gitHooks.run(args);
 
-class Espruino {
-  list = () => this.run("--list")
-
-  private run = async (args: string) => (await exec(
-    `espruino/node_modules/.bin/espruino ${args}`,
-    { output: OutputMode.Capture },
-  )).output
-}
+const espruino = new Espruino();
 const commands = new Commands({
   fmt,
   hooks,
@@ -38,52 +34,16 @@ const commands = new Commands({
     await sketch.flash();
   },
   espruino: {
-    list: () => new Espruino().list()
+    upload: async ({ _: [file], p }) =>
+      console.log(
+        await espruino.upload(
+          p ?? (await espruino.iskraJsPort() ?? "") + "",
+          file + "",
+        ),
+      ),
+    ports: async () => console.log((await espruino.ports()).join("\n")),
   },
   run: async () => await new Runner().run(`node js/main.js`),
 });
-
-class ArduinoSketch {
-  private readonly board = "arduino:avr:uno";
-  private readonly port = "/dev/cu.usbmodem144101";
-  private readonly runner = new Runner();
-
-  constructor(private sketch: string) {}
-
-  async compile(): Promise<void> {
-    await this.run(`compile ${this.sketch}`);
-  }
-  async flash(): Promise<void> {
-    await this.run(`upload -p ${this.port} ${this.sketch}`);
-  }
-
-  private async run(cmd: string): Promise<void> {
-    return await this.runner.run(`arduino-cli ${cmd} -b ${this.board}`);
-  }
-}
-
-class Firmata {
-  async download(name: string): Promise<void> {
-    const dir = `sketch/${name}`;
-    const file = `${dir}/${name}.ino`;
-    const exists = async (f: string) => {
-      try {
-        await lstat(file);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    };
-    if (await exists(file)) {
-      return;
-    }
-    const response = await fetch(
-      `https://raw.githubusercontent.com/firmata/arduino/v2.4.4/examples/StandardFirmata/StandardFirmata.ino`,
-    );
-    const text = await response.text();
-    await mkdir(dir, { recursive: true });
-    await writeTextFile(file, text);
-  }
-}
 
 await commands.runAndExit();

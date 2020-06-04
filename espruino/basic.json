@@ -1,0 +1,43 @@
+{
+  "espruino": {
+    "RESET_BEFORE_SEND": true,
+    "STORE_LINE_NUMBERS": true,
+    "ENV_ON_CONNECT": true,
+    "MODULE_URL": "http://js.amperka.ru/modules",
+    "MODULE_EXTENSIONS": ".min.js|.js",
+    "MODULE_AS_FUNCTION": true,
+    "MODULE_PROXY_ENABLED": false,
+    "MODULE_PROXY_URL": "",
+    "MODULE_PROXY_PORT": "",
+    "BAUD_RATE": 9600,
+    "SERIAL_IGNORE": "/dev/ttyS*|/dev/*.SOC|/dev/*.MALS",
+    "SERIAL_FLOW_CONTROL": true,
+    "BLUETOOTH_LOW_ENERGY": true,
+    "WEB_BLUETOOTH": true,
+    "WEB_SERIAL": true,
+    "BOARD_JSON_URL": "http://js.amperka.ru/json",
+    "COMPILATION": true,
+    "COMPILATION_URL": "https://www.espruino.com/service/compiler",
+    "MINIFICATION_LEVEL": "",
+    "MODULE_MINIFICATION_LEVEL": "ESPRIMA",
+    "ROLLUP": false,
+    "MODULE_MERGE": true,
+    "MINIFICATION_Mangle": true,
+    "PRETOKENISE": false,
+    "SAVE_ON_SEND": 1,
+    "SAVE_STORAGE_FILE": "",
+    "SET_TIME_ON_WRITE": false,
+    "SERIAL_THROTTLE_SEND": false,
+    "SERIAL_TCPIP": []
+  },
+  "ports": [
+    {
+      "type": "path",
+      "name": "/dev/tty.usbmodem00000000001A1"
+    }
+  ],
+  "config": {},
+  "storageContents": {},
+  "verbose": true,
+  "file": "espruino/basic.js"
+}
