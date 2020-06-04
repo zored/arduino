@@ -17,7 +17,7 @@ export class Espruino {
       throw new Error("No port specified.");
     }
     return await this.run(
-      `--verbose --board ISKRAJS; -j --port ${port} ${file}`,
+      `--verbose --port ${port} -j ${file}`,
       true,
     );
   };
