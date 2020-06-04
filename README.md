@@ -13,3 +13,8 @@ You can run JS on host PC to control Arduino. To do this you need [Firmata](http
 ./run.ts flash Firmata
 ./run.ts run
 ```
+
+
+## TODO
+- Add [babel](https://github.com/andrewwakeling/espruino-webpack-babel-sample)
+- Make agile upload script.
