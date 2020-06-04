@@ -1,11 +1,11 @@
 #!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run --quiet
 import { Args } from "https://deno.land/std/flags/mod.ts";
 import {
-  Info,
   Commands,
   GitHooks,
   Runner,
-} from "https://raw.githubusercontent.com/zored/deno/v0.0.18/mod.ts";
+} from "https://raw.githubusercontent.com/zored/deno/v0.0.28/mod.ts";
+import { exec, OutputMode } from "https://deno.land/x/exec@0.0.5/mod.ts";
 const { mkdir, writeTextFile, lstat } = Deno;
 const fmt = () => new Runner().run(`deno fmt ./run.ts`);
 
@@ -14,6 +14,14 @@ const gitHooks = new GitHooks({
 });
 const hooks = (args: Args) => gitHooks.run(args);
 
+class Espruino {
+  list = () => this.run("--list")
+
+  private run = async (args: string) => (await exec(
+    `espruino/node_modules/.bin/espruino ${args}`,
+    { output: OutputMode.Capture },
+  )).output
+}
 const commands = new Commands({
   fmt,
   hooks,
@@ -28,6 +36,9 @@ const commands = new Commands({
     const sketch = new ArduinoSketch(`sketch/${name}`);
     await sketch.compile();
     await sketch.flash();
+  },
+  espruino: {
+    list: () => new Espruino().list()
   },
   run: async () => await new Runner().run(`node js/main.js`),
 });
