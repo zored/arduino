@@ -18,7 +18,7 @@ const getPath = (relative: string) => realPath(__dirname + "/../" + relative);
 const log = <T>(a: T): T => {
   console.log(a);
   return a;
-}
+};
 
 export class Espruino {
   iskraJsPort = async (): Promise<Port | undefined> =>
@@ -39,7 +39,9 @@ export class Espruino {
   };
 
   private getJobFile = async (sketch: SketchPath, port: Port) => {
-    const job: IJob = JSON.parse(await readTextFile(await getPath("sketch/ts/_config/job.json")));
+    const job: IJob = JSON.parse(
+      await readTextFile(await getPath("sketch/ts/_config/job.json")),
+    );
     job.ports.push({ type: "path", name: port });
     job.file = sketch;
     const jobPath = await getPath("dist/job.json");

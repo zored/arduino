@@ -12,8 +12,9 @@
     "include": [
         "sketch/ts/**/*.ts"
     ],
-    "types": [
-        "espruino"
+    "typeRoots": [
+        "./sketch/ts/_config/types",
+        "./node_modules/@types"
     ],
     "exclude": ["node_modules"]
 }
