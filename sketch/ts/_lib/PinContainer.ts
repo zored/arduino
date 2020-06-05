@@ -15,7 +15,6 @@ export class PinContainer {
         }
         this.busy.add(pin);
         pinMode(pin, mode, false);
-        console.log('BEFORE RETURN', pin);
         return pin;
     }
 }
