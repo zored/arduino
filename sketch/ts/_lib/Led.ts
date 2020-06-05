@@ -1,8 +1,6 @@
 export class Led {
     private active?: boolean;
-    public readonly pin: Pin
-    constructor(pin: Pin){
-        this.pin = arguments[0];
+    constructor(public readonly pin: Pin){
     }
     on(){
         return this.toggle(true)

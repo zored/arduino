@@ -1,4 +1,3 @@
-
 export class MySet<T> {
     private readonly vs: T[];
 
