@@ -39,7 +39,8 @@ async function test() {
     console.log(`A default parameter: ${parameter}`);
   }());
 
-  const wait = duration => new Promise(resolve => setTimeout(resolve, duration));
+  // const wait = (duration: number) => new Promise(resolve => setTimeout(resolve, duration));
+  const wait = (duration) => new Promise(resolve => setTimeout(resolve, duration));
 
   // array destructuring & async/await
   const [a,b] = await Promise.all(['first-promise', Promise.resolve('second-promise')]);

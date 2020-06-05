@@ -1,0 +1,1 @@
+export const he = () => console.log('he-he');
