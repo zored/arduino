@@ -1,5 +1,9 @@
 # arduino
-Here are my [arduino](https://www.arduino.cc/) scripts. I have UNO board.
+Here are my [arduino](https://www.arduino.cc/) scripts.
+
+I have boards:
+- [UNO](https://store.arduino.cc/usa/arduino-uno-rev3).
+- [Isrka JS](http://wiki.amperka.ru/js:iskra_js).
 
 ## Sketches
 You can flash any [sketch](./sketch).

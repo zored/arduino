@@ -1,19 +1,23 @@
 {
-  "name": "espruino-webpack-babel-sample",
+  "name": "arduino",
   "version": "1.0.0",
-  "description": "A sample project which uses Webpack & Babel for Espruino",
+  "description": "My arduino scripts.",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode production"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "babel",
-    "webpack",
-    "espruino"
-  ],
-  "author": "Andrew Wakeling",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zored/arduino.git"
+  },
+  "author": "zored",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zored/arduino/issues"
+  },
+  "homepage": "https://github.com/zored/arduino",
   "dependencies": {
+    "@types/espruino": "^1.94.3",
     "@zeit/ncc": "^0.22.3",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -26,7 +30,9 @@
     "babel-plugin-transform-es2015-shorthand-properties": "^6.24.1",
     "babel-plugin-transform-es2015-spread": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "espruino": "^0.1.31",
     "fast-async": "^6.3.1",
+    "serialport": "^9.0.0",
     "typescript": "^3.9.5",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "webpack": "^4.20.2",

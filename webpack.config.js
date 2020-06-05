@@ -3,10 +3,10 @@ const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-  entry: ['./src/promise-fix.js', './dist/index.js'],
+  entry: ['./sketch/ts/_config/promise-fix.js', './dist/index.js'],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'entry.bundle.js',
+    filename: 'result.js',
   },
   module: {
     rules: [

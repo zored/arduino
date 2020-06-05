@@ -1,5 +1,6 @@
-import { exec, OutputMode, __ } from "../../deps.ts";
-const { readTextFile, writeTextFile } = Deno;
+import { exec, OutputMode, __ } from "../deps.ts";
+
+const { readTextFile, writeTextFile, realPath } = Deno;
 const { __dirname } = __(import.meta);
 type Port = string;
 type SketchPath = string;
@@ -13,7 +14,11 @@ interface IJob {
   file: string;
 }
 
-const getPath = (relative: string) => __dirname + "/../" + relative;
+const getPath = (relative: string) => realPath(__dirname + "/../" + relative);
+const log = <T>(a: T): T => {
+  console.log(a);
+  return a;
+}
 
 export class Espruino {
   iskraJsPort = async (): Promise<Port | undefined> =>
@@ -34,10 +39,10 @@ export class Espruino {
   };
 
   private getJobFile = async (sketch: SketchPath, port: Port) => {
-    const job: IJob = JSON.parse(await readTextFile(getPath("job.json")));
+    const job: IJob = JSON.parse(await readTextFile(await getPath("sketch/ts/_config/job.json")));
     job.ports.push({ type: "path", name: port });
     job.file = sketch;
-    const jobPath = getPath("last_job.json");
+    const jobPath = await getPath("dist/job.json");
     await writeTextFile(jobPath, JSON.stringify(job, null, 2));
     return jobPath;
   };
@@ -46,7 +51,7 @@ export class Espruino {
 
   private run = async (args: string, showProgress = false) =>
     (await exec(
-      getPath("/node_modules/.bin/espruino") + " " + args,
+      log((await getPath("/node_modules/.bin/espruino")) + " " + args),
       { output: showProgress ? OutputMode.Tee : OutputMode.Capture },
     )).output;
 }
