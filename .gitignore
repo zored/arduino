@@ -2,3 +2,7 @@
 *.hex
 node_modules/
 sketch/Firmata/
+last_job.json
+npm-debug.log
+dist/
+.idea/

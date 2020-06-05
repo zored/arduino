@@ -1,13 +1,16 @@
 #!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run --quiet
 import { Args } from "https://deno.land/std/flags/mod.ts";
 import {
-  Commands,
+  runCommands,
   GitHooks,
   Runner,
   assertAllTracked,
-} from "https://raw.githubusercontent.com/zored/deno/v0.0.28/mod.ts";
-import { Firmata, Espruino, ArduinoSketch } from "./deno/lib.ts";
-const fmt = () => new Runner().run(`deno fmt ./run.ts ./deno`);
+} from "./deps.ts";
+import { Firmata, ArduinoSketch } from "./deno/lib.ts";
+const fmt = () =>
+  new Runner().run(
+    `deno fmt ./run.ts ./deno ./espruino/run.ts ./espruino/deno`,
+  );
 
 const gitHooks = new GitHooks({
   "pre-commit": async () => {
@@ -17,8 +20,7 @@ const gitHooks = new GitHooks({
 });
 const hooks = (args: Args) => gitHooks.run(args);
 
-const espruino = new Espruino();
-const commands = new Commands({
+runCommands({
   fmt,
   hooks,
   flash: async (args) => {
@@ -33,17 +35,5 @@ const commands = new Commands({
     await sketch.compile();
     await sketch.flash();
   },
-  espruino: {
-    upload: async ({ _: [file], p }) =>
-      console.log(
-        await espruino.upload(
-          p ?? (await espruino.iskraJsPort() ?? "") + "",
-          file + "",
-        ),
-      ),
-    ports: async () => console.log((await espruino.ports()).join("\n")),
-  },
   run: async () => await new Runner().run(`node js/main.js`),
 });
-
-await commands.runAndExit();

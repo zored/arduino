@@ -22,7 +22,7 @@
     "MODULE_MINIFICATION_LEVEL": "ESPRIMA",
     "ROLLUP": false,
     "MODULE_MERGE": true,
-    "MINIFICATION_Mangle": true,
+    "MINIFICATION_Mangle": false,
     "PRETOKENISE": false,
     "SAVE_ON_SEND": 1,
     "SAVE_STORAGE_FILE": "",
@@ -30,12 +30,7 @@
     "SERIAL_THROTTLE_SEND": false,
     "SERIAL_TCPIP": []
   },
-  "ports": [
-    {
-      "type": "path",
-      "name": "/dev/tty.usbmodem00000000001A1"
-    }
-  ],
+  "ports": [],
   "config": {},
   "storageContents": {},
   "verbose": true,
