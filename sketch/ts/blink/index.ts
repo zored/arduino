@@ -1,41 +1,5 @@
-class MySet<T> {
-    private readonly vs: T[];
+import { PinContainer } from "../_lib/PinContainer.ts";
 
-    constructor(...values: T[]) {
-        this.vs = values
-    }
-
-    add(v: T){
-        if (!this.has(v)) {
-            this.vs.push(v)
-        }
-        return this
-    }
-
-    has(v: T){
-        return this.vs.indexOf(v) >= 0
-    }
-}
-
-class PinContainer {
-    private busy = new MySet<Pin>();
-    output(pin: Pin) {
-        return this.get(pin, 'output')
-    }
-    input(pin: Pin){
-        return this.get(pin, 'input')
-    }
-    private get(pin: Pin, mode: InputMode): Pin {
-        console.log('GETTING', pin);
-        if (this.busy.has(pin)) {
-            throw new Error(`Pin ${pin} is already taken!`);
-        }
-        this.busy.add(pin);
-        pinMode(pin, mode, false);
-        console.log('BEFORE RETURN', pin);
-        return pin;
-    }
-}
 
 class Led {
     private active?: boolean;
