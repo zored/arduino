@@ -14,6 +14,7 @@
   "author": "Andrew Wakeling",
   "license": "MIT",
   "dependencies": {
+    "@zeit/ncc": "^0.22.3",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",

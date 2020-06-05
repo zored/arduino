@@ -1,3 +1,3 @@
-const {he} = require('./other')
+import {he} from "./other"
 
 he();
