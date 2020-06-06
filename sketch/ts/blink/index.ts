@@ -1,5 +1,7 @@
-import { PinContainer } from "../_lib/PinContainer.ts";
-import { Led } from "../_lib/Led.ts";
+// Blink LED on body of Iskra.
+import {IskraJs} from "../_lib/pin/IskraJs"
+import {addGlobals} from "../_lib/std/addGlobals"
 
-const led = new Led(new PinContainer().output(B6));
-setInterval(() => led.toggle(), 2000);
+const iskra = new IskraJs()
+setInterval(() => iskra.getLed().toggle(), 2000)
+addGlobals({myIskra: iskra})

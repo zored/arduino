@@ -1,22 +1,21 @@
-#!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run --quiet
+#!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run
 import {
   CommandArgs,
   runCommands,
   GitHooks,
   Runner,
-  exec,
-  OutputMode,
   assertAllTracked,
 } from "./deps.ts";
-const { remove, stat } = Deno;
-const execLog = async (c: string) => {
-  console.log(c);
-  const response = await exec(c, { output: OutputMode.Tee });
-  if (response.status.code !== 0) {
-    throw new Error(`Command exited with code ${response.status.code}!`);
-  }
-  return response;
-};
+const { remove } = Deno;
+
+const exec = (() => {
+  const runner = new Runner();
+  return async (command: string) => {
+    console.log(`\n\n${command}\n=====\n`);
+    return await runner.run(command);
+  };
+})();
+
 import { Firmata, ArduinoSketch } from "./deno/ino.ts";
 import { Espruino } from "./deno/ts.ts";
 const fmt = () =>
@@ -35,6 +34,15 @@ const hooks = (args: CommandArgs) => gitHooks.run(args);
 const espruino = new Espruino();
 const src = `./sketch`;
 
+const build = async (args: CommandArgs) => {
+  const { _: [name = "test"] } = args;
+  try {
+    await remove("./dist/index.js");
+  } catch (e) {}
+  await exec(`npx ncc build ${src}/ts/${name}/index.ts`); // 👉 ./dist/index.js
+  await exec(`npx webpack --mode production`); // 👉 ./dist/result.js
+};
+
 runCommands({
   init: () => exec(`yarn install`),
   fmt,
@@ -51,22 +59,20 @@ runCommands({
     await sketch.compile();
     await sketch.flash();
   },
-  buildTs: async ({ _: [name = "test"] }) => {
-    try {
-      await remove("./dist/index.js");
-    } catch (e) {}
-    await execLog(`npx ncc build ${src}/ts/${name}/index.ts`); // 👉 ./dist/index.js
-    await execLog(`npx webpack --mode production`); // 👉 ./dist/result.js
-  },
+  build,
   runFirmata: () => exec(`node sketch/js/firmata/main.js`),
   espruino: {
-    upload: async ({ _: [file = `./dist/result.js`], p }) =>
+    upload: async ({ _: [file = `./dist/result.js`], p, build: buildName }) => {
+      if (buildName) {
+        await build({ _: [buildName] });
+      }
       console.log(
         await espruino.upload(
           p ?? (await espruino.iskraJsPort() ?? "") + "",
           file + "",
         ),
-      ),
+      );
+    },
     ports: async () => console.log((await espruino.ports()).join("\n")),
   },
 });

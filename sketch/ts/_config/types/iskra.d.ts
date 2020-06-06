@@ -3,3 +3,4 @@ declare var INPUT: InputMode;
 declare var OUTPUT: InputMode;
 declare var B6: Pin;
 declare var LED1: Pin;
+declare var global: Record<string, any>
