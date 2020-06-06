@@ -4,29 +4,24 @@ import {
   runCommands,
   GitHooks,
   Runner,
+  sh,
   assertAllTracked,
 } from "./deps.ts";
 const { remove } = Deno;
 
-const exec = (() => {
-  const runner = new Runner();
-  return async (command: string) => {
-    console.log(`\n\n${command}\n=====\n`);
-    return await runner.run(command);
-  };
-})();
+const exec = sh;
 
 import { Firmata, ArduinoSketch } from "./deno/ino.ts";
 import { Espruino } from "./deno/ts.ts";
-const fmt = () =>
-  new Runner().run(
-    `deno fmt ./run.ts ./deno`,
+const fmt = (args: CommandArgs) =>
+  sh(
+    `deno fmt ${args.c ? "--check " : ""}./run.ts ./deno`,
   );
 
 const gitHooks = new GitHooks({
   "pre-commit": async () => {
     await assertAllTracked();
-    await fmt();
+    await fmt({ c: 1, _: [] });
   },
 });
 const hooks = (args: CommandArgs) => gitHooks.run(args);
