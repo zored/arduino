@@ -1,0 +1,33 @@
+diff --git a/node_modules/espruino/core/utils.js b/node_modules/espruino/core/utils.js
+index 42d5137..f9abc81 100644
+--- a/node_modules/espruino/core/utils.js
++++ b/node_modules/espruino/core/utils.js
+@@ -363,6 +363,8 @@
+         } else {
+           // Node.js
+           if (resultUrl.substr(0,4)=="http") {
++
++            const doQuery = (resultUrl) => {
+             var m = resultUrl[4]=="s"?"https":"http";
+ 
+             var http_options = Espruino.Config.MODULE_PROXY_ENABLED ? {
+@@ -372,6 +374,10 @@
+             } : resultUrl;
+ 
+             require(m).get(http_options, function(res) {
++              if ([302,301].includes(res.statusCode)) {
++                doQuery(res.headers.location)
++                return
++              }
+               if (res.statusCode != 200) {
+                 console.log("Espruino.Core.Utils.getURL: got HTTP status code "+res.statusCode+" for "+url);
+                 return callback(undefined);
+@@ -385,6 +391,8 @@
+               console.error("getURL("+JSON.stringify(url)+") error : "+err);
+               callback(undefined);
+             });
++            }
++            doQuery(resultUrl);
+           } else {
+             require("fs").readFile(resultUrl, function(err, d) {
+               if (err) {
