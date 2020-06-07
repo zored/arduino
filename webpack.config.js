@@ -2,36 +2,21 @@ const path = require('path');
 
 const babel = {
   plugins: [
+    ['transform-object-rest-spread', {useBuiltIns: true}],
     'check-es2015-constants',
-    '@babel/plugin-transform-classes',
-    [
-      '@babel/plugin-proposal-object-rest-spread',
-      {
-        useBuiltIns: true,
-      },
-    ],
-    '@babel/plugin-transform-block-scoped-functions',
-    [
-      '@babel/plugin-transform-block-scoping',
-      {
-        throwIfClosureRequired: true,
-      },
-    ],
-    '@babel/plugin-transform-destructuring',
-    '@babel/plugin-transform-parameters',
-    [
-      'module:fast-async',
-      {
-        spec: true,
-      },
-    ],
-    '@babel/plugin-transform-shorthand-properties',
+    'transform-es2015-block-scoped-functions',
+    ['transform-es2015-block-scoping', {throwIfClosureRequired: true}],
+    'transform-es2015-spread',
+    'transform-es2015-destructuring',
+    'transform-es2015-parameters',
+    'transform-es2015-shorthand-properties',
+    ['fast-async', {spec: true}],
+    'transform-es2015-classes',
   ],
 };
 
 module.exports = {
   entry: [
-    'es6-symbol/implement',
     './sketch/ts/_config/promise-fix.js',
     './dist/index.js',
   ],

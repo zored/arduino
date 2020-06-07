@@ -2,34 +2,36 @@
   "name": "arduino",
   "version": "1.0.0",
   "description": "My arduino scripts.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "patch-package"
+  "homepage": "https://github.com/zored/arduino",
+  "bugs": {
+    "url": "https://github.com/zored/arduino/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zored/arduino.git"
   },
-  "author": "zored",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/zored/arduino/issues"
+  "author": "zored",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "patch-package",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "https://github.com/zored/arduino",
   "dependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/plugin-proposal-object-rest-spread": "^7.10.1",
-    "@babel/plugin-transform-block-scoped-functions": "^7.10.1",
-    "@babel/plugin-transform-block-scoping": "^7.10.1",
-    "@babel/plugin-transform-classes": "^7.10.1",
-    "@babel/plugin-transform-destructuring": "^7.10.1",
-    "@babel/plugin-transform-parameters": "^7.10.1",
-    "@babel/plugin-transform-shorthand-properties": "^7.10.1",
     "@types/espruino": "^1.94.3",
     "@zeit/ncc": "^0.22.3",
-    "babel-loader": "^8.1.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
     "babel-plugin-check-es2015-constants": "^6.22.0",
+    "babel-plugin-transform-es2015-block-scoped-functions": "^6.22.0",
+    "babel-plugin-transform-es2015-block-scoping": "^6.26.0",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel-plugin-transform-es2015-parameters": "^6.24.1",
+    "babel-plugin-transform-es2015-shorthand-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-spread": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "espruino": "^0.1.31",
     "ext": "^1.1.2",
     "fast-async": "^6.3.8",
