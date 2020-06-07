@@ -35,6 +35,7 @@
     "espruino": "^0.1.31",
     "ext": "^1.1.2",
     "fast-async": "^6.3.8",
+    "nodent-transform": "^3.2.9",
     "patch-package": "^6.2.2",
     "serialport": "^9.0.0",
     "symbol-es6": "^0.1.2",

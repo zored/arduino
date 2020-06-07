@@ -1,0 +1,17 @@
+diff --git a/node_modules/nodent-transform/arboriculture.js b/node_modules/nodent-transform/arboriculture.js
+index 3630ca7..13cda7a 100644
+--- a/node_modules/nodent-transform/arboriculture.js
++++ b/node_modules/nodent-transform/arboriculture.js
+@@ -1473,11 +1473,11 @@ function asynchronize(pr, opts, logger, parsePart, printNode) {
+                     "body": body
+                 }
+             });
++            mapped.push(continuation);
+             mapped.push({
+                 type: 'ReturnStatement',
+                 argument: invokeIterate
+             });
+-            mapped.push(continuation);
+             path[0].replace(mapped.map(down));
+         }
+     }

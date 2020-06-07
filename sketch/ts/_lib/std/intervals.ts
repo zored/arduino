@@ -7,8 +7,8 @@ export const intervals = async (ms: number[], f: () => {}, tries = Infinity): Pr
     }
 
     for (let i = 0; i < tries; i++) {
-        for (let m of ms) {
-            await delay(m)
+        for (let j in ms) {
+            await delay(ms[j])
             f()
         }
     }
