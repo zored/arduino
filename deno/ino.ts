@@ -1,8 +1,28 @@
 import {
   Runner,
 } from "https://raw.githubusercontent.com/zored/deno/v0.0.28/mod.ts";
+import { IFlasher, Port, SketchPath } from "./all.ts";
 const { mkdir, writeTextFile, lstat } = Deno;
 
+export class UnoFlasher implements IFlasher {
+  suits = (path: SketchPath): boolean => /\/sketch\/ino\//.test(path);
+
+  async flash(
+    path: SketchPath,
+    persist: boolean,
+    port?: Port,
+    buildName?: string,
+  ): Promise<void> {
+    if (/sketch\/Firmata$/.test(path)) {
+      await new Firmata().download(path);
+    } else if (path === "") {
+      throw new Error("Specify sketch name.");
+    }
+    const sketch = new ArduinoSketch(`${path}`);
+    await sketch.compile();
+    await sketch.flash();
+  }
+}
 export class ArduinoSketch {
   private readonly board = "arduino:avr:uno";
   private readonly port = "/dev/cu.usbmodem144101";

@@ -24,6 +24,11 @@ export class WiFi {
         return this.client = client
     }
 
+    getAccessPoints = async (): Promise<AccessPoint[]> => {
+        const client = await this.connect()
+        return await this.getAps(client)
+    }
+
     private authorize = (client: Client) => new Promise<void>((ok, bad) =>
         client.connect(
             this.login,
@@ -34,12 +39,6 @@ export class WiFi {
             }
         )
     )
-
-
-    getAccessPoints = async (): Promise<AccessPoint[]> => {
-        const client = await this.connect()
-        return await this.getAps(client)
-    }
 
     private getAps = (client: AmperkaWifiClient) => new Promise<AccessPoint[]>((ok, bad) =>
         client.getAPs((err, accessPoints) =>

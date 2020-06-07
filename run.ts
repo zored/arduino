@@ -5,15 +5,11 @@ import {
   GitHooks,
   runCommands,
   sh,
-  __,
+  parseDuration,
 } from "./deps.ts";
-import { ArduinoSketch, Firmata } from "./deno/ino.ts";
 import { Espruino } from "./deno/ts.ts";
-const { __dirname } = __(import.meta);
-
-const { remove } = Deno;
-
-const exec = sh;
+import { AllFlasher } from "./deno/all.ts";
+import { UnoFlasher } from "./deno/ino.ts";
 
 const fmt = (args: CommandArgs) =>
   sh(
@@ -28,61 +24,31 @@ const gitHooks = new GitHooks({
 });
 const hooks = (args: CommandArgs) => gitHooks.run(args);
 
-const espruino = new Espruino();
-const src = `./sketch`;
-
-const build = async (args: CommandArgs) => {
-  const { _: [name = "test"] } = args;
-  try {
-    await remove("./dist/index.js");
-  } catch (e) {
-  }
-  await exec(`npx ncc build ${src}/ts/${name}/index.ts`); // 👉 ./dist/index.js
-  await exec(`npx webpack --mode production`); // 👉 ./dist/result.js
-
-  // Replace bad requires:
-  const path = __dirname + "/dist/result.js";
-  const text = await Deno.readTextFile(path);
-  await Deno.writeTextFile(
-    path,
-    text
-      .replace(
-        /eval\("require"\)\("@amperka/g,
-        'require("@amperka',
-      ),
-  );
-};
-
+const espruino = new Espruino(Deno.args.includes("-v"));
 runCommands({
-  init: () => exec(`yarn install`),
+  init: () => sh(`yarn install`),
   fmt,
   hooks,
-  flash: async (args) => {
-    const name = args._[0] || "";
-    switch (name) {
-      case "":
-        throw new Error("Specify sketch name!");
-      case "Firmata":
-        await new Firmata().download(name);
-    }
-    const sketch = new ArduinoSketch(`${src}/${name}`);
-    await sketch.compile();
-    await sketch.flash();
-  },
-  runFirmata: () => exec(`node sketch/js/firmata/main.js`),
-  espruino: {
+  flash: async ({
+    _: [path = './dist/result.js'],
+    persist,
     build,
-    upload: async ({ _: [file = `./dist/result.js`], p, build: buildName }) => {
-      if (buildName) {
-        await build({ _: [buildName] });
-      }
-      console.log(
-        await espruino.upload(
-          p ?? (await espruino.iskraJsPort() ?? "") + "",
-          file + "",
-        ),
-      );
-    },
-    ports: async () => console.log((await espruino.ports()).join("\n")),
-  },
+    port,
+    p,
+    exitDuration,
+  }) =>
+    await new AllFlasher([
+      espruino,
+      new UnoFlasher(),
+    ], exitDuration + "").flash(
+      path + "",
+      !!persist,
+      p ?? port,
+      build,
+    ),
+  host: () => sh(`node sketch/js/firmata/main.js`),
+  build: ({ _: [name = "test"] }) => espruino.build(name + ""),
+  tty: () => espruino.tty(),
+  eval: ({ _: [code], wait }) => espruino.eval(code + "", wait + ""),
+  list: async () => console.log((await espruino.ports()).join("\n")),
 });
