@@ -31,6 +31,7 @@ const babel = {
 
 module.exports = {
   entry: [
+    'es6-symbol/implement',
     './sketch/ts/_config/promise-fix.js',
     './dist/index.js',
   ],
