@@ -1,6 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: ['./sketch/ts/_config/promise-fix.js', './dist/index.js'],
@@ -14,23 +12,37 @@ module.exports = {
         test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
-        }
-      }
-    ]
-  },
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
-          compress: true,
-          ecma: 6,
-          mangle: false // Disable name mangling to avoid this issue: https://github.com/espruino/Espruino/issues/1367
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              'check-es2015-constants',
+              '@babel/plugin-transform-classes',
+              [
+                '@babel/plugin-proposal-object-rest-spread',
+                {
+                  useBuiltIns: true,
+                },
+              ],
+              '@babel/plugin-transform-block-scoped-functions',
+              [
+                '@babel/plugin-transform-block-scoping',
+                {
+                  throwIfClosureRequired: true,
+                },
+              ],
+              '@babel/plugin-transform-destructuring',
+              '@babel/plugin-transform-parameters',
+              [
+                'module:fast-async',
+                {
+                  spec: true,
+                },
+              ],
+              '@babel/plugin-transform-shorthand-properties',
+            ],
+          },
         },
-        sourceMap: true
-      })
-    ]
+      },
+    ],
   },
 };
