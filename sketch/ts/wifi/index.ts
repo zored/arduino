@@ -1,15 +1,22 @@
 import {WiFi} from "../_lib/WiFi.ts"
+import {addGlobals} from "../_lib/std/addGlobals.ts"
 
-(async () => {
-    console.log('started')
-    const wifi = new WiFi('my', 'wifi')
-    console.log(wifi);
-    await wifi.connect()
-    console.log('connected')
+const http = require('http')
 
-    require('http').get('http://amperka.ru', (res: any) => {
-        let response = ''
+const myGet = (url: string) => new Promise((resolve) => {
+    let response = ''
+    http.get(url, (res: any) => {
         res.on('data', (d: string) => response += d)
-        res.on('close', () => console.log(response))
+        res.on('close', () => resolve(response))
     })
-})();
+})
+
+const main = async () => {
+    console.log('connecting...')
+    const myWifi = new WiFi('my', 'wifi')
+    await myWifi.connect()
+    addGlobals({myWifi, myGet})
+    console.log('connected! see my* functions')
+}
+
+main().catch(e => console.log('App error.', e))

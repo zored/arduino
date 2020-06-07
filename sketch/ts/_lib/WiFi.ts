@@ -1,4 +1,11 @@
+const AmperkaWifi = require('@amperka/wifi')
+
+type Client = AmperkaWifiClient
+type AccessPoint = WifiAccessPoint
+
 export class WiFi {
+    private client?: AmperkaWifiClient
+
     constructor(
         private login: string,
         private password: string,
@@ -6,30 +13,44 @@ export class WiFi {
     ) {
     }
 
-    connect = () => {
+    connect = async () => {
+        if (this.client !== undefined) {
+            return this.client
+        }
+
         this.serial.setup(115200)
-        return new Promise(async (resolve, reject) => {
-            console.log('xxx')
-            const wifi = await this.setup()
-            console.log('yyy', wifi)
-            wifi.connect(this.login, this.password, err => {
-                if (err) {
-                    reject(err)
-                    return
-                }
-                resolve()
-            })
-        })
+        const client = await this.createClient()
+        await this.authorize(client)
+        return this.client = client
     }
 
-    private setup = () => new Promise<AmperkaWifiSetup>((resolve, reject) => {
-        const wifi: AmperkaWifiSetup = require('@amperka/wifi')
-            .setup(this.serial, (err: Error | undefined) => {
-                if (err) {
-                    reject(err)
-                    return
-                }
-                resolve(wifi)
-            })
+    private authorize = (client: Client) => new Promise<void>((ok, bad) =>
+        client.connect(
+            this.login,
+            this.password,
+            err => {
+                console.log('connected', err)
+                err ? bad(err) : ok()
+            }
+        )
+    )
+
+
+    getAccessPoints = async (): Promise<AccessPoint[]> => {
+        const client = await this.connect()
+        return await this.getAps(client)
+    }
+
+    private getAps = (client: AmperkaWifiClient) => new Promise<AccessPoint[]>((ok, bad) =>
+        client.getAPs((err, accessPoints) =>
+            err ? bad(err) : ok(accessPoints)
+        )
+    )
+
+    private createClient = () => new Promise<AmperkaWifiClient>((resolve, reject) => {
+        const wifi: AmperkaWifiClient = AmperkaWifi.setup(
+            this.serial,
+            (err: Error | undefined) => err ? reject(err) : resolve(wifi)
+        )
     })
 }
