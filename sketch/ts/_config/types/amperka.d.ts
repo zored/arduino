@@ -10,7 +10,18 @@ interface ISerial {
 }
 declare var PrimarySerial: ISerial
 declare var Serial3: ISerial
+declare var OptErr: Error | null
 
-declare interface AmperkaWifiSetup {
+/**
+ * {@link http://wiki.amperka.ru/js:wifi}
+ */
+declare interface WifiAccessPoint {
+    ssid: string
+    enc: string
+    signal: number
+    mac: string
+}
+declare interface AmperkaWifiClient {
     connect(login: string, password: string, callback: (err: Error|undefined) => void): void
+    getAPs(f: (err: Error|undefined, aps: WifiAccessPoint[]) => void): void
 }
