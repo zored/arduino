@@ -8,6 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'result.js',
   },
+  externals: (c, request, f) => /^(@amperka|http$)/.test(request) ? f(null, 'commonjs2 ' + request) : f(),
   module: {
     rules: [
       {

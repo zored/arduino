@@ -1,18 +1,20 @@
 #!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run
 import {
-  CommandArgs,
-  runCommands,
-  GitHooks,
-  Runner,
-  sh,
   assertAllTracked,
+  CommandArgs,
+  GitHooks,
+  runCommands,
+  sh,
+  __,
 } from "./deps.ts";
+import { ArduinoSketch, Firmata } from "./deno/ino.ts";
+import { Espruino } from "./deno/ts.ts";
+const { __dirname } = __(import.meta);
+
 const { remove } = Deno;
 
 const exec = sh;
 
-import { Firmata, ArduinoSketch } from "./deno/ino.ts";
-import { Espruino } from "./deno/ts.ts";
 const fmt = (args: CommandArgs) =>
   sh(
     `deno fmt ${args.c ? "--check " : ""}./run.ts ./deno`,
@@ -33,9 +35,22 @@ const build = async (args: CommandArgs) => {
   const { _: [name = "test"] } = args;
   try {
     await remove("./dist/index.js");
-  } catch (e) {}
+  } catch (e) {
+  }
   await exec(`npx ncc build ${src}/ts/${name}/index.ts`); // 👉 ./dist/index.js
   await exec(`npx webpack --mode production`); // 👉 ./dist/result.js
+
+  // Replace bad requires:
+  const path = __dirname + "/dist/result.js";
+  const text = await Deno.readTextFile(path);
+  await Deno.writeTextFile(
+    path,
+    text
+      .replace(
+        /eval\("require"\)\("@amperka/g,
+        'require("@amperka',
+      ),
+  );
 };
 
 runCommands({
@@ -54,9 +69,9 @@ runCommands({
     await sketch.compile();
     await sketch.flash();
   },
-  build,
   runFirmata: () => exec(`node sketch/js/firmata/main.js`),
   espruino: {
+    build,
     upload: async ({ _: [file = `./dist/result.js`], p, build: buildName }) => {
       if (buildName) {
         await build({ _: [buildName] });
