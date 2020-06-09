@@ -1,24 +1,22 @@
 # arduino
-Here are my [arduino](https://www.arduino.cc/) scripts.
+Here are my scripts for:
+- [Arduino UNO](https://store.arduino.cc/usa/arduino-uno-rev3).
+- [Espruino](https://github.com/espruino/Espruino)-based [Isrka JS](http://wiki.amperka.ru/js:iskra_js).
 
-I have boards:
-- [UNO](https://store.arduino.cc/usa/arduino-uno-rev3).
-- [Isrka JS](http://wiki.amperka.ru/js:iskra_js).
-
-## Sketches
-You can flash any [sketch](./sketch).
+## Flash
+[Arduino](./sketch/ino).
 ```
-./run.ts flash AnalogLight
+./run.ts flash ./sketch/ino/AnalogLight
 ```
 
-## JS Host
-You can run JS on host PC to control Arduino. To do this you need [Firmata](https://github.com/firmata/arduino) firmware on Arduino:
+[Espruino](./sketch/ts):
 ```
-./run.ts flash Firmata
-./run.ts run
+./run.ts flash --build=wifi
 ```
 
-
-## TODO
-- Add [babel](https://github.com/andrewwakeling/espruino-webpack-babel-sample)
-- Make agile upload script.
+## Host
+You can run JS on host PC to control Arduino UNO via [Firmata firmware](https://github.com/firmata/arduino):
+```
+./run.ts flash ./sketch/ino/Firmata
+./run.ts host
+```
