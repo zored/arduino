@@ -1,0 +1,3 @@
+[submodule "vendor/Espruino"]
+	path = vendor/Espruino
+	url = git@github.com:zored/Espruino.git
