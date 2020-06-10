@@ -13,7 +13,7 @@ const myGet = (url: string) => new Promise((resolve) => {
 
 const main = async () => {
     console.log('connecting...')
-    const myWifi = new WiFi('my', 'wifi')
+    const myWifi = new WiFi(WIFI_LOGIN, WIFI_PASSWORD)
     await myWifi.connect()
     addGlobals({myWifi, myGet})
     console.log('connected! see my* functions')

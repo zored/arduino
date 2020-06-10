@@ -47,6 +47,9 @@ export class Espruino implements IFlasher {
     port?: Port,
     buildName?: string,
   ): Promise<void> {
+    if (buildName) {
+      await this.build(buildName);
+    }
     // noinspection ES6MissingAwait (flash requires open tty)
     this.tty(port);
 

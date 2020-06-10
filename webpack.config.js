@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 module.exports = {
   entry: [
     './sketch/ts/_config/promise-fix.js',
@@ -9,6 +10,14 @@ module.exports = {
     filename: 'result.js',
   },
   externals: (c, request, f) => /^(@amperka|http$)/.test(request) ? f(null, 'commonjs2 ' + request) : f(),
+  plugins: [
+    new webpack.DefinePlugin(
+      ['WIFI_LOGIN', 'WIFI_PASSWORD']
+        .reduce((a, n) => {
+          a[n] = JSON.stringify(process.env[n]);
+          return a;
+        }, {})),
+  ],
   module: {
     rules: [
       {
