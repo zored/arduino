@@ -1,22 +1,16 @@
-import {WiFi} from "../_lib/WiFi.ts"
+import {WiFi} from "../_lib/device/WiFi.ts"
 import {addGlobals} from "../_lib/std/addGlobals.ts"
-
-const http = require('http')
-
-const myGet = (url: string) => new Promise((resolve) => {
-    let response = ''
-    http.get(url, (res: any) => {
-        res.on('data', (d: string) => response += d)
-        res.on('close', () => resolve(response))
-    })
-})
+import {HttpRetriever} from "../_lib/std/HttpRetriever.ts"
+import {wrapLogs} from "../_lib/std/log.ts"
 
 const main = async () => {
-    console.log('connecting...')
     const myWifi = new WiFi(WIFI_LOGIN, WIFI_PASSWORD)
-    await myWifi.connect()
-    addGlobals({myWifi, myGet})
-    console.log('connected! see my* functions')
+    await wrapLogs(myWifi.connect(), 'connecting', 'connected')
+    const myHttp = HttpRetriever.forActiveTransport()
+    addGlobals({myWifi, myHttp})
+    const body = await myHttp.getBody("https://dmitriy.tatar/")
+    console.log(`response: "${body.substring(78, 118)}"`)
 }
 
-main().catch(e => console.log('App error.', e))
+// noinspection JSIgnoredPromiseFromCall
+main()

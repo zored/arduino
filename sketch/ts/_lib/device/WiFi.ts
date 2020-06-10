@@ -1,3 +1,5 @@
+import {HttpRetriever} from "../std/HttpRetriever.ts"
+
 const AmperkaWifi = require('@amperka/wifi')
 
 type Client = AmperkaWifiClient
@@ -21,6 +23,7 @@ export class WiFi {
         this.serial.setup(115200)
         const client = await this.createClient()
         await this.authorize(client)
+        HttpRetriever.setHasTransport()
         return this.client = client
     }
 
@@ -33,10 +36,7 @@ export class WiFi {
         client.connect(
             this.login,
             this.password,
-            err => {
-                console.log('connected', err)
-                err ? bad(err) : ok()
-            }
+            err => err ? bad(err) : ok()
         )
     )
 

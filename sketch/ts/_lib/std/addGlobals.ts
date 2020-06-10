@@ -5,5 +5,6 @@ export function addGlobals(values: Record<string, any>): void {
             throw new Error(`Global '${name}' already exists.`)
         }
         global[name] = value
+        console.log(`Added global "${name}".`)
     }
 }

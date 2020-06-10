@@ -22,7 +22,7 @@ interface IJob {
 
 const removeIfExists = async (path: string) => {
   try {
-    await remove(path);
+    await remove(await fromRoot(path));
   } catch (e) {
   }
 };
@@ -95,9 +95,9 @@ export class Espruino implements IFlasher {
     );
 
   build = async (name: string) => {
-    await removeIfExists(await fromRoot("dist/index.js"));
-    await exec(`npx ncc build ./sketch/ts/${name}/index.ts`); // 👉 ./dist/index.js
-    await exec(`npx webpack --mode production`); // 👉 ./dist/result.js
+    await removeIfExists("dist/index.js");
+    await sh(`npx ncc build ./sketch/ts/${name}/index.ts`); // 👉 ./dist/index.js
+    await sh(`npx webpack --mode production`); // 👉 ./dist/result.js
     await this.replaceRequires();
   };
 

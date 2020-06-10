@@ -10,7 +10,6 @@ interface ISerial {
 }
 declare var PrimarySerial: ISerial
 declare var Serial3: ISerial
-declare var OptErr: Error | null
 
 /**
  * {@link http://wiki.amperka.ru/js:wifi}

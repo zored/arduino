@@ -1,5 +1,5 @@
 import {PinContainer} from "./PinContainer"
-import {Led} from "../Led.ts"
+import {Led} from "../device/Led.ts"
 
 export class IskraJs {
     private led?: Led
