@@ -1,9 +1,10 @@
 async function test() {
   // Block scoping
-  let value = "is-outside";
+  const value = "is-outside";
   {
-    let value = "is-inside";
-    console.log(`value (inside-block): ${value}`);
+    //// Fails tslint:
+    // const value = "is-inside";
+    // console.log(`value (inside-block): ${value}`);
   }
   console.log(`value (outside-block): ${value}`);
 
@@ -28,9 +29,9 @@ async function test() {
   console.log(`wheels: ${wheels} color: ${color}`);
 
   // default parameter
-  (function (parameter = "default-value") {
+  (((parameter = "default-value") => {
     console.log(`A default parameter: ${parameter}`);
-  }());
+  })());
 
   const wait = (duration: number) =>
     new Promise((resolve) => setTimeout(resolve, duration));

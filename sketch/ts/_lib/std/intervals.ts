@@ -7,7 +7,10 @@ export const intervals = async (ms: number[], f: () => {}, tries = Infinity): Pr
     }
 
     for (let i = 0; i < tries; i++) {
-        for (let j in ms) {
+        for (const j in ms) {
+            if (!ms.hasOwnProperty(j)) {
+                continue
+            }
             await delay(ms[j])
             f()
         }

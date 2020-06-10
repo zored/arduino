@@ -11,10 +11,12 @@ import { Espruino } from "./deno/ts.ts";
 import { AllFlasher } from "./deno/all.ts";
 import { UnoFlasher } from "./deno/ino.ts";
 
-const fmt = (args: CommandArgs) =>
-  sh(
-    `deno fmt ${args.c ? "--check " : ""}./run.ts ./deno`,
+const fmt = async (args: CommandArgs) => {
+  await sh(`deno fmt ${args.c ? "--check " : ""}./run.ts ./deno`);
+  await sh(
+    `npx tslint -c tslint.json ./sketch/ts/**/*.ts${args.c ? "" : " --fix"}`,
   );
+};
 
 const gitHooks = new GitHooks({
   "pre-commit": async () => {
