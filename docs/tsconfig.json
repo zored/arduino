@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "ES2015",
+        "strict": true,
+        "jsx": "react",
+        "moduleResolution": "classic",
+        "lib": ["dom"]
+    },
+    "include": [
+        "ts/**/*.ts",
+        "ts/**/*.tsx"
+    ],
+    "typeRoots": [
+        "./node_modules/@types"
+    ]
+}
