@@ -42,7 +42,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(505);
+/******/ 		return __webpack_require__(274);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -94,6 +94,264 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = __webpack_require__(765);
 } else {
   module.exports = __webpack_require__(645);
+}
+
+
+/***/ }),
+
+/***/ 86:
+/***/ (function(module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function stringifiable(obj) {
+    // Safely stringify Object.create(null)
+    /* istanbul ignore next */
+    return typeof obj === 'object' && !('toString' in obj) ?
+        Object.prototype.toString.call(obj).slice(8, -1) :
+        obj;
+}
+var isProduction = typeof process === 'object' && process.env.NODE_ENV === 'production';
+function invariant(condition, message) {
+    if (!condition) {
+        /* istanbul ignore next */
+        if (isProduction) {
+            throw new Error('Invariant failed');
+        }
+        throw new Error(message());
+    }
+}
+exports.invariant = invariant;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var splice = Array.prototype.splice;
+var toString = Object.prototype.toString;
+function type(obj) {
+    return toString.call(obj).slice(8, -1);
+}
+var assign = Object.assign || /* istanbul ignore next */ (function (target, source) {
+    getAllKeys(source).forEach(function (key) {
+        if (hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+        }
+    });
+    return target;
+});
+var getAllKeys = typeof Object.getOwnPropertySymbols === 'function'
+    ? function (obj) { return Object.keys(obj).concat(Object.getOwnPropertySymbols(obj)); }
+    /* istanbul ignore next */
+    : function (obj) { return Object.keys(obj); };
+function copy(object) {
+    return Array.isArray(object)
+        ? assign(object.constructor(object.length), object)
+        : (type(object) === 'Map')
+            ? new Map(object)
+            : (type(object) === 'Set')
+                ? new Set(object)
+                : (object && typeof object === 'object')
+                    ? assign(Object.create(Object.getPrototypeOf(object)), object)
+                    /* istanbul ignore next */
+                    : object;
+}
+var Context = /** @class */ (function () {
+    function Context() {
+        this.commands = assign({}, defaultCommands);
+        this.update = this.update.bind(this);
+        // Deprecated: update.extend, update.isEquals and update.newContext
+        this.update.extend = this.extend = this.extend.bind(this);
+        this.update.isEquals = function (x, y) { return x === y; };
+        this.update.newContext = function () { return new Context().update; };
+    }
+    Object.defineProperty(Context.prototype, "isEquals", {
+        get: function () {
+            return this.update.isEquals;
+        },
+        set: function (value) {
+            this.update.isEquals = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Context.prototype.extend = function (directive, fn) {
+        this.commands[directive] = fn;
+    };
+    Context.prototype.update = function (object, $spec) {
+        var _this = this;
+        var spec = (typeof $spec === 'function') ? { $apply: $spec } : $spec;
+        if (!(Array.isArray(object) && Array.isArray(spec))) {
+            invariant(!Array.isArray(spec), function () { return "update(): You provided an invalid spec to update(). The spec may " +
+                "not contain an array except as the value of $set, $push, $unshift, " +
+                "$splice or any custom command allowing an array value."; });
+        }
+        invariant(typeof spec === 'object' && spec !== null, function () { return "update(): You provided an invalid spec to update(). The spec and " +
+            "every included key path must be plain objects containing one of the " +
+            ("following commands: " + Object.keys(_this.commands).join(', ') + "."); });
+        var nextObject = object;
+        getAllKeys(spec).forEach(function (key) {
+            if (hasOwnProperty.call(_this.commands, key)) {
+                var objectWasNextObject = object === nextObject;
+                nextObject = _this.commands[key](spec[key], nextObject, spec, object);
+                if (objectWasNextObject && _this.isEquals(nextObject, object)) {
+                    nextObject = object;
+                }
+            }
+            else {
+                var nextValueForKey = type(object) === 'Map'
+                    ? _this.update(object.get(key), spec[key])
+                    : _this.update(object[key], spec[key]);
+                var nextObjectValue = type(nextObject) === 'Map'
+                    ? nextObject.get(key)
+                    : nextObject[key];
+                if (!_this.isEquals(nextValueForKey, nextObjectValue)
+                    || typeof nextValueForKey === 'undefined'
+                        && !hasOwnProperty.call(object, key)) {
+                    if (nextObject === object) {
+                        nextObject = copy(object);
+                    }
+                    if (type(nextObject) === 'Map') {
+                        nextObject.set(key, nextValueForKey);
+                    }
+                    else {
+                        nextObject[key] = nextValueForKey;
+                    }
+                }
+            }
+        });
+        return nextObject;
+    };
+    return Context;
+}());
+exports.Context = Context;
+var defaultCommands = {
+    $push: function (value, nextObject, spec) {
+        invariantPushAndUnshift(nextObject, spec, '$push');
+        return value.length ? nextObject.concat(value) : nextObject;
+    },
+    $unshift: function (value, nextObject, spec) {
+        invariantPushAndUnshift(nextObject, spec, '$unshift');
+        return value.length ? value.concat(nextObject) : nextObject;
+    },
+    $splice: function (value, nextObject, spec, originalObject) {
+        invariantSplices(nextObject, spec);
+        value.forEach(function (args) {
+            invariantSplice(args);
+            if (nextObject === originalObject && args.length) {
+                nextObject = copy(originalObject);
+            }
+            splice.apply(nextObject, args);
+        });
+        return nextObject;
+    },
+    $set: function (value, _nextObject, spec) {
+        invariantSet(spec);
+        return value;
+    },
+    $toggle: function (targets, nextObject) {
+        invariantSpecArray(targets, '$toggle');
+        var nextObjectCopy = targets.length ? copy(nextObject) : nextObject;
+        targets.forEach(function (target) {
+            nextObjectCopy[target] = !nextObject[target];
+        });
+        return nextObjectCopy;
+    },
+    $unset: function (value, nextObject, _spec, originalObject) {
+        invariantSpecArray(value, '$unset');
+        value.forEach(function (key) {
+            if (Object.hasOwnProperty.call(nextObject, key)) {
+                if (nextObject === originalObject) {
+                    nextObject = copy(originalObject);
+                }
+                delete nextObject[key];
+            }
+        });
+        return nextObject;
+    },
+    $add: function (values, nextObject, _spec, originalObject) {
+        invariantMapOrSet(nextObject, '$add');
+        invariantSpecArray(values, '$add');
+        if (type(nextObject) === 'Map') {
+            values.forEach(function (_a) {
+                var key = _a[0], value = _a[1];
+                if (nextObject === originalObject && nextObject.get(key) !== value) {
+                    nextObject = copy(originalObject);
+                }
+                nextObject.set(key, value);
+            });
+        }
+        else {
+            values.forEach(function (value) {
+                if (nextObject === originalObject && !nextObject.has(value)) {
+                    nextObject = copy(originalObject);
+                }
+                nextObject.add(value);
+            });
+        }
+        return nextObject;
+    },
+    $remove: function (value, nextObject, _spec, originalObject) {
+        invariantMapOrSet(nextObject, '$remove');
+        invariantSpecArray(value, '$remove');
+        value.forEach(function (key) {
+            if (nextObject === originalObject && nextObject.has(key)) {
+                nextObject = copy(originalObject);
+            }
+            nextObject.delete(key);
+        });
+        return nextObject;
+    },
+    $merge: function (value, nextObject, _spec, originalObject) {
+        invariantMerge(nextObject, value);
+        getAllKeys(value).forEach(function (key) {
+            if (value[key] !== nextObject[key]) {
+                if (nextObject === originalObject) {
+                    nextObject = copy(originalObject);
+                }
+                nextObject[key] = value[key];
+            }
+        });
+        return nextObject;
+    },
+    $apply: function (value, original) {
+        invariantApply(value);
+        return value(original);
+    },
+};
+var defaultContext = new Context();
+exports.isEquals = defaultContext.update.isEquals;
+exports.extend = defaultContext.extend;
+exports.default = defaultContext.update;
+// @ts-ignore
+exports.default.default = module.exports = assign(exports.default, exports);
+// invariants
+function invariantPushAndUnshift(value, spec, command) {
+    invariant(Array.isArray(value), function () { return "update(): expected target of " + stringifiable(command) + " to be an array; got " + stringifiable(value) + "."; });
+    invariantSpecArray(spec[command], command);
+}
+function invariantSpecArray(spec, command) {
+    invariant(Array.isArray(spec), function () { return "update(): expected spec of " + stringifiable(command) + " to be an array; got " + stringifiable(spec) + ". " +
+        "Did you forget to wrap your parameter in an array?"; });
+}
+function invariantSplices(value, spec) {
+    invariant(Array.isArray(value), function () { return "Expected $splice target to be an array; got " + stringifiable(value); });
+    invariantSplice(spec.$splice);
+}
+function invariantSplice(value) {
+    invariant(Array.isArray(value), function () { return "update(): expected spec of $splice to be an array of arrays; got " + stringifiable(value) + ". " +
+        "Did you forget to wrap your parameters in an array?"; });
+}
+function invariantApply(fn) {
+    invariant(typeof fn === 'function', function () { return "update(): expected spec of $apply to be a function; got " + stringifiable(fn) + "."; });
+}
+function invariantSet(spec) {
+    invariant(Object.keys(spec).length === 1, function () { return "Cannot have more than one key in an object with $set"; });
+}
+function invariantMerge(target, specValue) {
+    invariant(specValue && typeof specValue === 'object', function () { return "update(): $merge expects a spec of type 'object'; got " + stringifiable(specValue); });
+    invariant(target && typeof target === 'object', function () { return "update(): $merge expects a target of type 'object'; got " + stringifiable(target); });
+}
+function invariantMapOrSet(target, command) {
+    var typeOfTarget = type(target);
+    invariant(typeOfTarget === 'Map' || typeOfTarget === 'Set', function () { return "update(): " + stringifiable(command) + " expects a target of type Set or Map; got " + stringifiable(typeOfTarget); });
 }
 
 
@@ -12964,6 +13222,276 @@ exports.version = ReactVersion;
 
 /***/ }),
 
+/***/ 274:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ../sketch/ts/_lib/shared/Color.ts
+var Color = /** @class */ (function () {
+    function Color(red, green, blue) {
+        var _this = this;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.toGBR255 = function () { return [_this.green, _this.blue, _this.red].map(function (v) { return v * 255; }); };
+        this.toRGB = function () { return [_this.red, _this.green, _this.blue]; };
+        this.toRGB().forEach(Color.assertZeroToOne);
+    }
+    Color.fromHSL = function (hue, saturation, lightness) {
+        Color.assertZeroToOne(hue);
+        Color.assertZeroToOne(saturation);
+        Color.assertZeroToOne(lightness);
+        if (saturation === 0) {
+            return new Color(lightness, lightness, lightness);
+        }
+        var hue2rgb = function (pInner, qInner, t) {
+            if (t < 0)
+                t += 1;
+            if (t > 1)
+                t -= 1;
+            if (t < 1 / 6)
+                return pInner + (qInner - pInner) * 6 * t;
+            if (t < 1 / 2)
+                return qInner;
+            if (t < 2 / 3)
+                return pInner + (qInner - pInner) * (2 / 3 - t) * 6;
+            return pInner;
+        };
+        var q = lightness < 0.5
+            ? lightness * (1 + saturation)
+            : lightness + saturation - lightness * saturation;
+        var p = 2 * lightness - q;
+        return new Color(hue2rgb(p, q, hue + 1 / 3), hue2rgb(p, q, hue), hue2rgb(p, q, hue - 1 / 3));
+    };
+    Color.assertZeroToOne = function (n) {
+        if (n < 0 || n > 1) {
+            throw new Error("Invalid color part: " + n);
+        }
+    };
+    Color.randomHue = function () { return Color.fromHSL(Math.random(), 1, 0.4); };
+    return Color;
+}());
+
+
+// EXTERNAL MODULE: ./node_modules/react-dom/index.js
+var react_dom = __webpack_require__(40);
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(175);
+
+// CONCATENATED MODULE: ../sketch/ts/_lib/shared/Point.ts
+var Point = /** @class */ (function () {
+    function Point(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    return Point;
+}());
+
+
+// EXTERNAL MODULE: ./node_modules/immutability-helper/index.js
+var immutability_helper = __webpack_require__(86);
+var immutability_helper_default = /*#__PURE__*/__webpack_require__.n(immutability_helper);
+
+// CONCATENATED MODULE: ./ts/component/leds/Frame.tsx
+
+
+
+var Frame = function (props) {
+    var color = props.color;
+    var _a = Object(react.useState)(props.frame), frame = _a[0], setFrame_ = _a[1];
+    var _b = Object(react.useState)(false), drawing = _b[0], setDrawing = _b[1];
+    var setFrame = function (f) {
+        setFrame_(f);
+        props.onUpdate(f);
+    };
+    var fill = function (p) {
+        var _a, _b;
+        return setFrame(immutability_helper_default()(frame, { colors: (_a = {}, _a[p.y] = (_b = {}, _b[p.x] = { $set: color }, _b), _a) }));
+    };
+    var setDuration = function (d) {
+        return setFrame(immutability_helper_default()(frame, { durationMs: { $set: parseInt(d, 10) } }));
+    };
+    var fillOnDraw = function (p) {
+        if (drawing) {
+            fill(p);
+        }
+    };
+    var prevent = function (f) { return function (e) {
+        e.preventDefault();
+        f();
+    }; };
+    window.addEventListener('mouseup', function () { return setDrawing(false); });
+    return Object(react.createElement)("div", { className: "frame" },
+        Object(react.createElement)("h2", null,
+            "Frame #",
+            props.index),
+        Object(react.createElement)("table", { className: "pin-table" },
+            Object(react.createElement)("tbody", null, frame.colors.map(function (colorsRow, y) {
+                return Object(react.createElement)("tr", { key: 'y' + y }, colorsRow.map(function (backgroundColor, x) {
+                    var point = new Point(x, y);
+                    return Object(react.createElement)("td", { key: 'x' + x, style: { backgroundColor: backgroundColor, width: 40, height: 40 }, onMouseDown: prevent(function () { return setDrawing(true); }), onMouseMove: prevent(function () { return fillOnDraw(point); }), onClick: function () { return fill(point); } });
+                }));
+            }))),
+        Object(react.createElement)("div", null,
+            Object(react.createElement)("label", { htmlFor: "" }, "Duration (ms):"),
+            Object(react.createElement)("input", { type: "text", value: frame.durationMs, onChange: function (e) { return setDuration(e.target.value); } })));
+};
+
+// CONCATENATED MODULE: ./ts/component/leds/Preview.tsx
+
+
+var Preview = function (props) {
+    var _a = Object(react.useState)(0), frameIndex = _a[0], setFrameIndex = _a[1];
+    var frame = props.animation.frames[frameIndex];
+    setTimeout(function () {
+        return setFrameIndex(frameIndex === props.animation.frames.length - 1
+            ? 0
+            : frameIndex + 1);
+    }, frame.durationMs);
+    return Object(react.createElement)("div", { className: "frame" },
+        Object(react.createElement)("h2", null, "Preview"),
+        Object(react.createElement)("div", null,
+            "Frame #",
+            frameIndex),
+        Object(react.createElement)("table", { className: "pin-table" },
+            Object(react.createElement)("tbody", null, frame.colors.map(function (colorsRow, y) {
+                return Object(react.createElement)("tr", { key: 'previewY' + y }, colorsRow.map(function (backgroundColor, x) {
+                    return Object(react.createElement)("td", { key: 'previewX' + x, style: { backgroundColor: backgroundColor, width: 40, height: 40 } });
+                }));
+            }))));
+};
+
+// CONCATENATED MODULE: ./ts/component/leds/Animation.tsx
+
+
+
+
+
+var Animation = function (p) {
+    var _a = Object(react.useState)(p.animation), animation = _a[0], setAnimation = _a[1];
+    var setFrame = function (i, frame) {
+        var _a;
+        return setAnimation(immutability_helper_default()(animation, { frames: (_a = {}, _a[i] = { $set: frame }, _a) }));
+    };
+    var framesHtml = animation.frames.map(function (frame, i) {
+        return Object(react.createElement)(Frame, { key: "anim" + i, color: "#f00", frame: frame, onUpdate: function (f) { return setFrame(i, f); }, index: i });
+    });
+    framesHtml.push(Object(react.createElement)(Preview, { key: "preview", animation: animation }));
+    var html = framesHtml.reduce(function (acc, item, i) {
+        acc.push(item);
+        if (i % 3 === 2) {
+            acc.push(Object(react.createElement)("br", { key: "br" + i }));
+        }
+        return acc;
+    }, []);
+    return Object(react.createElement)("div", null, html);
+};
+
+// EXTERNAL MODULE: ./node_modules/jquery/dist/jquery.js
+var jquery = __webpack_require__(142);
+
+// CONCATENATED MODULE: ./ts/index.tsx
+
+
+
+
+
+jquery(document).ready(function () {
+    Color.fromHSL(1, 1, 0.5);
+    console.log('ok');
+    var range = function (length) { return Array.from({ length: length }); };
+    var animation = {
+        frames: range(4).map(function () { return ({
+            colors: range(4).map(function () { return range(4).map(function () { return '#00f'; }); }),
+            durationMs: 200
+        }); })
+    };
+    Object(react_dom.render)(Object(react.createElement)(Animation, { animation: animation }), jquery('#colors')[0]);
+    old();
+});
+function old() {
+    var drawing = false;
+    var key = function (v) { return function (e) {
+        if (e.code === 'Space') {
+            drawing = v;
+        }
+    }; };
+    var frames = [];
+    var refreshResult = function () { return jquery('#result').val(JSON.stringify(frames)); };
+    refreshResult();
+    var rgbToHex = function (s) {
+        var _a = s
+            .match(/rgb\((?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)\)/)
+            .groups, red = _a.red, green = _a.green, blue = _a.blue;
+        var componentToHex = function (c) {
+            var hex = parseInt(c).toString(16);
+            return hex.length == 1 ? '0' + hex : hex;
+        };
+        return '#' + componentToHex(red) + componentToHex(green) + componentToHex(blue);
+    };
+    var $body = jquery('body');
+    for (var hue = 0; hue <= 360; hue += 36) {
+        jquery('<input type="button"/>')
+            .css({ backgroundColor: "hsl(" + hue + ", 100%, 50%)" })
+            .on('click', function (e) { return jquery('#color').val(rgbToHex(getComputedStyle(e.target).backgroundColor)); })
+            .appendTo($body);
+    }
+    var $table = jquery('<table>').appendTo($body);
+    var time = 20;
+    var $time = jquery("<input type=\"number\" value=\"" + time + "\">").appendTo($body);
+    console.log('kek');
+    var index = 0;
+    var colors = [];
+    var frameIndex = frames.push({
+        colors: colors,
+        time: time,
+    }) - 1;
+    var initialColor = '#000000';
+    var updateColor = function (index, color) {
+        frames[frameIndex].colors[index] = color;
+        refreshResult();
+    };
+    for (var x = 0; x < 4; x++) {
+        var $row = jquery('<tr>').appendTo($table);
+        var _loop_1 = function (y) {
+            var colorIndex = index++;
+            colors[colorIndex] = initialColor;
+            var draw = function (e) {
+                var color = jquery('#color').val();
+                jquery(e.target).css({ 'background-color': color });
+                colors[colorIndex] = color;
+                updateColor(colorIndex, color);
+            };
+            jquery("<td>" + colorIndex + "</td>")
+                .appendTo($row)
+                .css({
+                width: 20,
+                height: 20,
+            })
+                .on({
+                mousemove: function (e) {
+                    if (drawing) {
+                        draw(e);
+                    }
+                },
+                mousedown: draw,
+            })
+                .css({
+                'background-color': initialColor,
+            });
+        };
+        for (var y = 0; y < 4; y++) {
+            _loop_1(y);
+        }
+    }
+}
+
+
+/***/ }),
+
 /***/ 303:
 /***/ (function(__unusedmodule, exports) {
 
@@ -13099,228 +13627,6 @@ checkPropTypes.resetWarningCache = function() {
 }
 
 module.exports = checkPropTypes;
-
-
-/***/ }),
-
-/***/ 505:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// CONCATENATED MODULE: ../sketch/ts/_lib/shared/Color.ts
-var Color = /** @class */ (function () {
-    function Color(red, green, blue) {
-        var _this = this;
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.toGBR255 = function () { return [_this.green, _this.blue, _this.red].map(function (v) { return v * 255; }); };
-        this.toRGB = function () { return [_this.red, _this.green, _this.blue]; };
-        this.toRGB().forEach(Color.assertZeroToOne);
-    }
-    Color.fromHSL = function (hue, saturation, lightness) {
-        Color.assertZeroToOne(hue);
-        Color.assertZeroToOne(saturation);
-        Color.assertZeroToOne(lightness);
-        if (saturation == 0) {
-            return new Color(lightness, lightness, lightness);
-        }
-        var hue2rgb = function (p, q, t) {
-            if (t < 0)
-                t += 1;
-            if (t > 1)
-                t -= 1;
-            if (t < 1 / 6)
-                return p + (q - p) * 6 * t;
-            if (t < 1 / 2)
-                return q;
-            if (t < 2 / 3)
-                return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-        };
-        var q = lightness < 0.5
-            ? lightness * (1 + saturation)
-            : lightness + saturation - lightness * saturation;
-        var p = 2 * lightness - q;
-        return new Color(hue2rgb(p, q, hue + 1 / 3), hue2rgb(p, q, hue), hue2rgb(p, q, hue - 1 / 3));
-    };
-    Color.assertZeroToOne = function (n) {
-        if (n < 0 || n > 1) {
-            throw new Error("Invalid color part: " + n);
-        }
-    };
-    Color.randomHue = function () { return Color.fromHSL(Math.random(), 1, 0.4); };
-    return Color;
-}());
-
-
-// EXTERNAL MODULE: ./node_modules/react-dom/index.js
-var react_dom = __webpack_require__(40);
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(175);
-
-// CONCATENATED MODULE: ../sketch/ts/_lib/shared/Point.ts
-var Point = /** @class */ (function () {
-    function Point(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    return Point;
-}());
-
-
-// CONCATENATED MODULE: ./ts/component/leds/Frame.tsx
-var __assign = (undefined && undefined.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-
-
-var Frame = function (props) {
-    var color = props.color;
-    var _a = Object(react.useState)(props.frame), frame = _a[0], setFrame = _a[1];
-    var _b = Object(react.useState)(false), drawing = _b[0], setDrawing = _b[1];
-    var st = function (o) { return (__assign({}, o)); };
-    var fill = function (p) {
-        frame.colors[p.y][p.x] = color;
-        return frame;
-    };
-    var fillOnDraw = function (p) { return drawing ? fill(p) : frame; };
-    var prevent = function (f) { return function (e) {
-        e.preventDefault();
-        f();
-    }; };
-    return Object(react.createElement)("div", { className: "frame", onMouseUp: function () { return console.log('ooo'); } },
-        Object(react.createElement)("div", { className: "title" },
-            "Frame #",
-            props.index),
-        Object(react.createElement)("pre", null, JSON.stringify({ frame: frame, color: color, drawing: drawing }, null, 2)),
-        Object(react.createElement)("table", null,
-            Object(react.createElement)("tbody", null, frame.colors.map(function (colorsRow, y) {
-                return Object(react.createElement)("tr", { key: 'y' + y }, colorsRow.map(function (backgroundColor, x) {
-                    var point = new Point(x, y);
-                    return Object(react.createElement)("td", { key: 'x' + x, style: { backgroundColor: backgroundColor, width: 40, height: 40, display: 'block' }, 
-                        // onMouseDown={prevent(() => setDrawing(true))}
-                        onMouseUp: function () {
-                            console.log('mouseup');
-                            setDrawing(false);
-                        } });
-                }));
-            }))));
-};
-
-// EXTERNAL MODULE: ./node_modules/jquery/dist/jquery.js
-var jquery = __webpack_require__(142);
-
-// CONCATENATED MODULE: ./ts/index.tsx
-
-
-
-
-
-jquery(document).ready(function () {
-    Color.fromHSL(1, 1, 0.5);
-    console.log('ok');
-    var range = function (length) { return Array.from({ length: 2 }); };
-    var colors = range(4).map(function () { return range(4).map(function () { return '#00f'; }); });
-    Object(react_dom.render)(Object(react.createElement)(Frame, { color: "#f00", frame: { colors: colors, time: 0 }, index: 0 }), jquery('#colors')[0]);
-    old();
-});
-function old() {
-    var drawing = false;
-    var key = function (v) { return function (e) {
-        if (e.code === 'Space') {
-            drawing = v;
-        }
-    }; };
-    var frames = [];
-    var refreshResult = function () { return jquery('#result').val(JSON.stringify(frames)); };
-    refreshResult();
-    var rgbToHex = function (s) {
-        var _a = s
-            .match(/rgb\((?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)\)/)
-            .groups, red = _a.red, green = _a.green, blue = _a.blue;
-        var componentToHex = function (c) {
-            var hex = parseInt(c).toString(16);
-            return hex.length == 1 ? '0' + hex : hex;
-        };
-        return '#' + componentToHex(red) + componentToHex(green) + componentToHex(blue);
-    };
-    var $body = jquery('body');
-    // .on({
-    //     mousedown: (e) => {
-    //         e.preventDefault()
-    //         drawing = true
-    //     },
-    //     mouseup: () => drawing = false,
-    //     keydown: key(true),
-    //     keyup: key(false),
-    // })
-    for (var hue = 0; hue <= 360; hue += 36) {
-        jquery('<input type="button"/>')
-            .css({ backgroundColor: "hsl(" + hue + ", 100%, 50%)" })
-            .on('click', function (e) { return jquery('#color').val(rgbToHex(getComputedStyle(e.target).backgroundColor)); })
-            .appendTo($body);
-    }
-    var $table = jquery('<table>').appendTo($body);
-    var time = 20;
-    var $time = jquery("<input type=\"number\" value=\"" + time + "\">").appendTo($body);
-    console.log('kek');
-    var index = 0;
-    var colors = [];
-    var frameIndex = frames.push({
-        colors: colors,
-        time: time,
-    }) - 1;
-    var initialColor = '#000000';
-    var updateColor = function (index, color) {
-        frames[frameIndex].colors[index] = color;
-        refreshResult();
-    };
-    for (var x = 0; x < 4; x++) {
-        var $row = jquery('<tr>').appendTo($table);
-        var _loop_1 = function (y) {
-            var colorIndex = index++;
-            colors[colorIndex] = initialColor;
-            var draw = function (e) {
-                var color = jquery('#color').val();
-                jquery(e.target).css({ 'background-color': color });
-                colors[colorIndex] = color;
-                updateColor(colorIndex, color);
-            };
-            jquery("<td>" + colorIndex + "</td>")
-                .appendTo($row)
-                .css({
-                width: 20,
-                height: 20,
-            })
-                .on({
-                mousemove: function (e) {
-                    if (drawing) {
-                        draw(e);
-                    }
-                },
-                mousedown: draw,
-            })
-                .css({
-                'background-color': initialColor,
-            });
-        };
-        for (var y = 0; y < 4; y++) {
-            _loop_1(y);
-        }
-    }
-}
 
 
 /***/ }),
