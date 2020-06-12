@@ -1,7 +1,7 @@
 import * as React from "react"
-import {IFrame} from "../../data/animation/IFrame"
+import {IFrame} from "../../../../sketch/ts/_lib/shared/data/animation/IFrame"
 import {Point} from "../../../../sketch/ts/_lib/shared/Point"
-import {HexColor} from "../../data/animation/IAnimation"
+import {HexColor} from "../../../../sketch/ts/_lib/shared/data/animation/IAnimation"
 import update from "immutability-helper"
 
 export interface FrameProps {

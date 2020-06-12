@@ -1,4 +1,11 @@
 type InputMode = 'analog'| 'input'| 'input_pullup'| 'input_pulldown'| 'output'| 'opendrain'| 'af_output' | 'af_opendrain';
+
+declare interface DigitalPin extends Pin {}
+declare interface AnalogPin extends DigitalPin {}
+declare var P3: AnalogPin;
+declare var P4: DigitalPin;
+declare var P6: AnalogPin;
+declare var P7: DigitalPin;
 declare var B6: Pin;
 declare var LED1: Pin;
 declare var global: Record<string, any>

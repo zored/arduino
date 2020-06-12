@@ -1,4 +1,4 @@
-import {HexColor} from "./IAnimation"
+import {HexColor} from "./IAnimation.ts"
 
 export interface IFrame {
     durationMs: number

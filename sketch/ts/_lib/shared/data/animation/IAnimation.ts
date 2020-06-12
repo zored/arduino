@@ -1,4 +1,4 @@
-import {IFrame} from "./IFrame"
+import {IFrame} from "./IFrame.ts"
 
 export interface IAnimation {
     frames: IFrame[]

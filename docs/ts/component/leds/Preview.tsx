@@ -1,6 +1,6 @@
 import * as React from "react"
 import {useState} from "react"
-import {IAnimation} from "../../data/animation/IAnimation"
+import {IAnimation} from "../../../../sketch/ts/_lib/shared/data/animation/IAnimation"
 
 export interface PreviewProps {
     animation: IAnimation

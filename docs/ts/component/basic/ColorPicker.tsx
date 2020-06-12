@@ -1,4 +1,4 @@
-import {HexColor} from "../../data/animation/IAnimation"
+import {HexColor} from "../../../../sketch/ts/_lib/shared/data/animation/IAnimation"
 import * as React from "react"
 import {useState} from "react"
 import {range} from "lodash"

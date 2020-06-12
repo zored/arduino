@@ -2,11 +2,11 @@ import {Frame} from "./Frame"
 import * as React from "react"
 import {useState} from "react"
 import {Preview} from "./Preview"
-import {IFrame} from "../../data/animation/IFrame"
+import {IFrame} from "../../../../sketch/ts/_lib/shared/data/animation/IFrame"
 import update from "immutability-helper"
 import {ColorPicker} from "../basic/ColorPicker"
 import {range} from "lodash/fp"
-import {IAnimation} from "../../data/animation/IAnimation"
+import {IAnimation} from "../../../../sketch/ts/_lib/shared/data/animation/IAnimation"
 
 export interface AnimationProps {
     width: number
