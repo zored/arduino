@@ -14,7 +14,10 @@ export interface FrameProps {
 export const Frame = (props: FrameProps) => {
     const {color} = props
     const [frame, setFrame_] = React.useState(props.frame)
-    const [drawing, setDrawing] = React.useState(false)
+    const [drawing, setDrawing] = React.useState(() => {
+        console.log('construct')
+        return false
+    })
     const setFrame = (f: IFrame) => {
         setFrame_(f)
         props.onUpdate(f)
@@ -25,6 +28,7 @@ export const Frame = (props: FrameProps) => {
     const setDuration = (d: string) =>
         setFrame(update(frame, {durationMs: {$set: parseInt(d, 10)}}))
     const fillOnDraw = (p: Point): void => {
+        console.log(drawing)
         if (drawing) {
             fill(p)
         }
@@ -34,7 +38,10 @@ export const Frame = (props: FrameProps) => {
         f()
     }
 
-    window.addEventListener('mouseup', () => setDrawing(false))
+    window.addEventListener('mouseup', () => {
+        console.log('what')
+        setDrawing(false)
+    })
 
     return <div className="frame">
         <table className="pin-table">
@@ -46,9 +53,9 @@ export const Frame = (props: FrameProps) => {
                         return <td
                             key={'x' + x}
                             style={{backgroundColor, width: 40, height: 40}}
-                            onMouseDown={prevent(() => setDrawing(true))}
-                            onMouseMove={prevent(() => fillOnDraw(point))}
-                            onClick={() => fill(point)}
+                            onMouseDown={(() => setDrawing(true))}
+                            onMouseMove={(() => fillOnDraw(point))}
+                            onClick={(() => fill(point))}
                         />
                     })
                 }</tr>
