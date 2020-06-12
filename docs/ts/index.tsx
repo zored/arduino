@@ -1,16 +1,23 @@
 import {Color} from "../../sketch/ts/_lib/shared/Color"
 import * as ReactDOM from "react-dom"
-import {Frame} from "./component/leds/Frame"
+import {Animation} from "./component/leds/Animation"
 import * as $ from "jquery"
 import * as React from "react"
+import {IAnimation} from "./data/animation/IAnimation"
 
 $(document).ready(() => {
     Color.fromHSL(1, 1, 0.5)
     console.log('ok')
-    const range = (length: number) => Array.from({length: 2})
-    const colors = range(4).map(() => range(4).map(() => '#00f'))
+    const range = (length: number) => Array.from({length})
+    const animation: IAnimation = {
+        frames: range(4).map(() => ({
+            colors: range(4).map(() => range(4).map(() => '#00f')),
+            durationMs: 200
+        }))
+    }
+
     ReactDOM.render(
-        <Frame color="#f00" frame={{colors, time: 0}} index={0}/>,
+        <Animation animation={animation}/>,
         $('#colors')[0]
     )
     old()
@@ -42,16 +49,7 @@ function old() {
         return '#' + componentToHex(red) + componentToHex(green) + componentToHex(blue)
     }
 
-    const $body = $('body')
-        // .on({
-        //     mousedown: (e) => {
-        //         e.preventDefault()
-        //         drawing = true
-        //     },
-        //     mouseup: () => drawing = false,
-        //     keydown: key(true),
-        //     keyup: key(false),
-        // })
+    const $body = $('body');
     for (let hue = 0; hue <= 360; hue += 36) {
         $('<input type="button"/>')
             .css({backgroundColor: `hsl(${hue}, 100%, 50%)`})

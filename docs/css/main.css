@@ -1,0 +1,17 @@
+.pin-table tr:first-child td:first-child {
+    border-top-left-radius: 10px;
+}
+.pin-table tr:first-child td:last-child {
+    border-top-right-radius: 10px;
+}
+.pin-table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.pin-table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.frame {
+    display: inline-block;
+    margin: 0 10px 10px 0;
+}

@@ -4,12 +4,12 @@
         "module": "ES2015",
         "strict": true,
         "jsx": "react",
-        "moduleResolution": "classic",
+        "moduleResolution": "node",
         "lib": ["dom"]
     },
     "include": [
         "ts/**/*.ts",
-        "ts/**/*.tsx"
+        "ts/**/*.tsx",
     ],
     "typeRoots": [
         "./node_modules/@types"

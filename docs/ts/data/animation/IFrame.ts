@@ -1,6 +1,6 @@
 import {HexColor} from "./IAnimation"
 
 export interface IFrame {
-    time: number
+    durationMs: number
     colors: HexColor[][]
 }
