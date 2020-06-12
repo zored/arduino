@@ -8,16 +8,19 @@ export interface PreviewProps {
 
 export const Preview = (props: PreviewProps) => {
     const [frameIndex, setFrameIndex] = useState(0)
-    const frame = props.animation.frames[frameIndex]
+    const {animation} = props
+    const frame = animation.frames[frameIndex]
+    if (!frame) {
+        return <div/>
+    }
 
     setTimeout(() =>
-            setFrameIndex(frameIndex === props.animation.frames.length - 1
+            setFrameIndex(frameIndex === animation.frames.length - 1
                 ? 0
                 : frameIndex + 1),
         frame.durationMs
     )
-    return <div className="frame">
-        <h2>Preview</h2>
+    return <div className="frame preview">
         <div>Frame #{frameIndex}</div>
         <table className="pin-table">
             <tbody>

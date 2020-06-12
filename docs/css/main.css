@@ -15,3 +15,38 @@
     display: inline-block;
     margin: 0 10px 10px 0;
 }
+
+.frame.preview {
+    background-color: #000;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.frame.preview textarea {
+    height: 100px;
+    margin-top: 20px;
+}
+
+.color-button {
+    display: inline-block;
+    margin: 0 5px 0 0;
+    width: 30px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    border: 1px solid #aaa;
+}
+
+.color-button:hover {
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.color-button.custom {
+    margin-right: 20px;
+    vertical-align: top;
+    height: 28px;
+    background-color: #000000;
+}
+.code textarea {
+    height: 300px;
+    display: inline-block;
+}
