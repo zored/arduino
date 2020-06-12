@@ -37,7 +37,6 @@ export const Frame = (props: FrameProps) => {
     window.addEventListener('mouseup', () => setDrawing(false))
 
     return <div className="frame">
-        <h2>Frame #{props.index}</h2>
         <table className="pin-table">
             <tbody>
             {frame.colors.map((colorsRow, y) =>
@@ -56,14 +55,10 @@ export const Frame = (props: FrameProps) => {
             )}
             </tbody>
         </table>
-
-        <div>
-            <label htmlFor="">Duration (ms):</label>
-            <input
-                type="text"
-                value={frame.durationMs}
-                onChange={e => setDuration(e.target.value)}
-            />
-        </div>
+        <input
+            type="text"
+            value={frame.durationMs}
+            onChange={e => setDuration(e.target.value)}
+        /> ms
     </div>
 }
