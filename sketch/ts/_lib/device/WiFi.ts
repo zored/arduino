@@ -1,4 +1,5 @@
 import {HttpRetriever} from "../std/HttpRetriever.ts"
+import {IskraJs} from "../pin/IskraJs.ts"
 
 const AmperkaWifi = require('@amperka/wifi')
 
@@ -8,19 +9,21 @@ type AccessPoint = WifiAccessPoint
 export class WiFi {
     private client?: AmperkaWifiClient
 
-    constructor(
+    private constructor(
         private login: string,
         private password: string,
-        private serial: ISerial = PrimarySerial,
+        private serial: Serial
     ) {
     }
+
+    static fromEnv = (serial: Serial = IskraJs.instance.getUART()) => new WiFi(WIFI_LOGIN, WIFI_PASSWORD, serial)
 
     connect = async () => {
         if (this.client !== undefined) {
             return this.client
         }
 
-        this.serial.setup(115200)
+        this.serial.setup(115200, {})
         const client = await this.createClient()
         await this.authorize(client)
         HttpRetriever.setHasTransport()

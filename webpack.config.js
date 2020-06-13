@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 module.exports = {
   entry: [
+    './sketch/ts/_config/object-fix.js',
     './sketch/ts/_config/promise-fix.js',
     './dist/index.js',
   ],
@@ -12,7 +13,11 @@ module.exports = {
   externals: (c, request, f) => /^(@amperka|http$)/.test(request) ? f(null, 'commonjs2 ' + request) : f(),
   plugins: [
     new webpack.DefinePlugin(
-      ['WIFI_LOGIN', 'WIFI_PASSWORD']
+      [
+        'WIFI_LOGIN',
+        'WIFI_PASSWORD',
+        'URL_ANIMATION',
+      ]
         .reduce((a, n) => {
           a[n] = JSON.stringify(process.env[n]);
           return a;

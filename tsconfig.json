@@ -4,14 +4,14 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "./sketch/ts/_config/types/",
+      "./node_modules/@types/"
+    ]
   },
   "include": [
     "sketch/ts/**/*.ts"
-  ],
-  "typeRoots": [
-    "./sketch/ts/_config/types/",
-    "./node_modules/@types/"
   ],
   "exclude": [
     "node_modules"

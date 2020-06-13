@@ -1,10 +1,10 @@
-import {Leds} from "../../device/Leds.ts"
 import {IFrame} from "../../shared/data/animation/IFrame.ts"
 import {Point} from "../../shared/Point.ts"
 import {Color} from "../../shared/Color.ts"
+import {ILeds} from "../../device/leds/ILeds.ts"
 
 export class LedsFrame {
-    constructor(private leds: Leds) {
+    constructor(private leds: ILeds) {
     }
 
     draw = (frame: IFrame): void =>
@@ -16,4 +16,6 @@ export class LedsFrame {
                 )
             )
         ))
+
+    clear = () => this.leds.draw(a => a.clear())
 }

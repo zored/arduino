@@ -1,0 +1,624 @@
+{
+  "P0": {
+    "port": "B",
+    "num": 11,
+    "in_addr": 1111523884,
+    "out_addr": 1111524012,
+    "functions": {
+      "I2C2": {
+        "type": "SDA",
+        "af": 0
+      },
+      "USART3": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM2": {
+        "type": "CH4",
+        "af": 0
+      }
+    }
+  },
+  "P1": {
+    "port": "B",
+    "num": 10,
+    "in_addr": 1111523880,
+    "out_addr": 1111524008,
+    "functions": {
+      "I2C2": {
+        "type": "SCL",
+        "af": 0
+      },
+      "SPI2": {
+        "type": "SCK",
+        "af": 0
+      },
+      "USART3": {
+        "type": "TX",
+        "af": 0
+      },
+      "TIM2": {
+        "type": "CH3",
+        "af": 0
+      }
+    }
+  },
+  "P2": {
+    "port": "A",
+    "num": 6,
+    "in_addr": 1111491096,
+    "out_addr": 1111491224,
+    "channel": 6,
+    "functions": {
+      "TIM13": {
+        "type": "CH1",
+        "af": 0
+      },
+      "SPI1": {
+        "type": "MISO",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH1",
+        "af": 0
+      }
+    }
+  },
+  "P3": {
+    "port": "A",
+    "num": 7,
+    "in_addr": 1111491100,
+    "out_addr": 1111491228,
+    "channel": 7,
+    "functions": {
+      "TIM14": {
+        "type": "CH1",
+        "af": 0
+      },
+      "SPI1": {
+        "type": "MOSI",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH1N",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH2",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH1N",
+        "af": 0
+      }
+    }
+  },
+  "P4": {
+    "port": "C",
+    "num": 3,
+    "in_addr": 1111556620,
+    "out_addr": 1111556748,
+    "channel": 13,
+    "functions": {
+      "SPI2": {
+        "type": "MOSI",
+        "af": 0
+      }
+    }
+  },
+  "P5": {
+    "port": "B",
+    "num": 1,
+    "in_addr": 1111523844,
+    "out_addr": 1111523972,
+    "channel": 9,
+    "functions": {
+      "TIM3": {
+        "type": "CH4",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH3N",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH3N",
+        "af": 0
+      }
+    }
+  },
+  "P6": {
+    "port": "B",
+    "num": 0,
+    "in_addr": 1111523840,
+    "out_addr": 1111523968,
+    "channel": 8,
+    "functions": {
+      "TIM3": {
+        "type": "CH3",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH2N",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH2N",
+        "af": 0
+      }
+    }
+  },
+  "P7": {
+    "port": "C",
+    "num": 2,
+    "in_addr": 1111556616,
+    "out_addr": 1111556744,
+    "channel": 12,
+    "functions": {
+      "SPI2": {
+        "type": "MISO",
+        "af": 0
+      }
+    }
+  },
+  "P8": {
+    "port": "C",
+    "num": 6,
+    "in_addr": 1111556632,
+    "out_addr": 1111556760,
+    "functions": {
+      "USART6": {
+        "type": "TX",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH1",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH1",
+        "af": 0
+      }
+    }
+  },
+  "P9": {
+    "port": "C",
+    "num": 7,
+    "in_addr": 1111556636,
+    "out_addr": 1111556764,
+    "functions": {
+      "USART6": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH2",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH2",
+        "af": 0
+      }
+    }
+  },
+  "P10": {
+    "port": "C",
+    "num": 8,
+    "in_addr": 1111556640,
+    "out_addr": 1111556768,
+    "functions": {
+      "USART6": {
+        "type": "CK",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH3",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH3",
+        "af": 0
+      }
+    }
+  },
+  "P11": {
+    "port": "C",
+    "num": 9,
+    "in_addr": 1111556644,
+    "out_addr": 1111556772,
+    "functions": {
+      "TIM8": {
+        "type": "CH4",
+        "af": 0
+      },
+      "I2C3": {
+        "type": "SDA",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH4",
+        "af": 0
+      }
+    }
+  },
+  "P12": {
+    "port": "A",
+    "num": 8,
+    "in_addr": 1111491104,
+    "out_addr": 1111491232,
+    "functions": {
+      "USART1": {
+        "type": "CK",
+        "af": 0
+      },
+      "I2C3": {
+        "type": "SCL",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH1",
+        "af": 0
+      }
+    }
+  },
+  "P13": {
+    "port": "A",
+    "num": 10,
+    "in_addr": 1111491112,
+    "out_addr": 1111491240,
+    "functions": {
+      "USART1": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH3",
+        "af": 0
+      }
+    }
+  },
+  "A0": {
+    "port": "A",
+    "num": 0,
+    "in_addr": 1111491072,
+    "out_addr": 1111491200,
+    "channel": 0,
+    "functions": {
+      "TIM5": {
+        "type": "CH1",
+        "af": 0
+      },
+      "USART4": {
+        "type": "TX",
+        "af": 0
+      }
+    }
+  },
+  "A1": {
+    "port": "A",
+    "num": 1,
+    "in_addr": 1111491076,
+    "out_addr": 1111491204,
+    "channel": 1,
+    "functions": {
+      "TIM5": {
+        "type": "CH2",
+        "af": 0
+      },
+      "USART4": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM2": {
+        "type": "CH2",
+        "af": 0
+      }
+    }
+  },
+  "A2": {
+    "port": "A",
+    "num": 2,
+    "in_addr": 1111491080,
+    "out_addr": 1111491208,
+    "channel": 2,
+    "functions": {
+      "USART2": {
+        "type": "TX",
+        "af": 0
+      },
+      "TIM5": {
+        "type": "CH3",
+        "af": 0
+      },
+      "TIM9": {
+        "type": "CH1",
+        "af": 0
+      },
+      "TIM2": {
+        "type": "CH3",
+        "af": 0
+      }
+    }
+  },
+  "A3": {
+    "port": "A",
+    "num": 3,
+    "in_addr": 1111491084,
+    "out_addr": 1111491212,
+    "channel": 3,
+    "functions": {
+      "USART2": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM5": {
+        "type": "CH4",
+        "af": 0
+      },
+      "TIM9": {
+        "type": "CH2",
+        "af": 0
+      },
+      "TIM2": {
+        "type": "CH4",
+        "af": 0
+      }
+    }
+  },
+  "A4": {
+    "port": "A",
+    "num": 4,
+    "in_addr": 1111491088,
+    "out_addr": 1111491216,
+    "channel": 4,
+    "functions": {
+      "USART2": {
+        "type": "CK",
+        "af": 0
+      },
+      "DAC1": {
+        "type": "CH1",
+        "af": 1
+      }
+    }
+  },
+  "A5": {
+    "port": "A",
+    "num": 5,
+    "in_addr": 1111491092,
+    "out_addr": 1111491220,
+    "channel": 5,
+    "functions": {
+      "DAC1": {
+        "type": "CH2",
+        "af": 1
+      },
+      "SPI1": {
+        "type": "SCK",
+        "af": 0
+      }
+    }
+  },
+  "A6": {
+    "port": "A",
+    "num": 6,
+    "in_addr": 1111491096,
+    "out_addr": 1111491224,
+    "channel": 6,
+    "functions": {
+      "TIM13": {
+        "type": "CH1",
+        "af": 0
+      },
+      "SPI1": {
+        "type": "MISO",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH1",
+        "af": 0
+      }
+    }
+  },
+  "A7": {
+    "port": "A",
+    "num": 7,
+    "in_addr": 1111491100,
+    "out_addr": 1111491228,
+    "channel": 7,
+    "functions": {
+      "TIM14": {
+        "type": "CH1",
+        "af": 0
+      },
+      "SPI1": {
+        "type": "MOSI",
+        "af": 0
+      },
+      "TIM8": {
+        "type": "CH1N",
+        "af": 0
+      },
+      "TIM3": {
+        "type": "CH2",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH1N",
+        "af": 0
+      }
+    }
+  },
+  "A8": {
+    "port": "A",
+    "num": 8,
+    "in_addr": 1111491104,
+    "out_addr": 1111491232,
+    "functions": {
+      "USART1": {
+        "type": "CK",
+        "af": 0
+      },
+      "I2C3": {
+        "type": "SCL",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH1",
+        "af": 0
+      }
+    }
+  },
+  "A9": {
+    "port": "A",
+    "num": 9,
+    "in_addr": 1111491108,
+    "out_addr": 1111491236,
+    "functions": {
+      "USART1": {
+        "type": "TX",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH2",
+        "af": 0
+      }
+    }
+  },
+  "A10": {
+    "port": "A",
+    "num": 10,
+    "in_addr": 1111491112,
+    "out_addr": 1111491240,
+    "functions": {
+      "USART1": {
+        "type": "RX",
+        "af": 0
+      },
+      "TIM1": {
+        "type": "CH3",
+        "af": 0
+      }
+    }
+  },
+  "A11": {
+    "port": "A",
+    "num": 11,
+    "in_addr": 1111491116,
+    "out_addr": 1111491244,
+    "functions": {
+      "TIM1": {
+        "type": "CH4",
+        "af": 0
+      }
+    }
+  },
+  "A12": {
+    "port": "A",
+    "num": 12,
+    "in_addr": 1111491120,
+    "out_addr": 1111491248,
+    "functions": {}
+  },
+  "A13": {
+    "port": "A",
+    "num": 13,
+    "in_addr": 1111491124,
+    "out_addr": 1111491252,
+    "functions": {}
+  },
+  "A14": {
+    "port": "A",
+    "num": 14,
+    "in_addr": 1111491128,
+    "out_addr": 1111491256,
+    "functions": {}
+  },
+  "A15": {
+    "port": "A",
+    "num": 15,
+    "in_addr": 1111491132,
+    "out_addr": 1111491260,
+    "functions": {}
+  },
+  "SCL": {
+    "port": "B",
+    "num": 8,
+    "in_addr": 1111523872,
+    "out_addr": 1111524000,
+    "functions": {
+      "TIM4": {
+        "type": "CH3",
+        "af": 0
+      },
+      "TIM10": {
+        "type": "CH1",
+        "af": 0
+      },
+      "I2C1": {
+        "type": "SCL",
+        "af": 0
+      }
+    }
+  },
+  "SDA": {
+    "port": "B",
+    "num": 9,
+    "in_addr": 1111523876,
+    "out_addr": 1111524004,
+    "functions": {
+      "TIM4": {
+        "type": "CH4",
+        "af": 0
+      },
+      "TIM11": {
+        "type": "CH1",
+        "af": 0
+      },
+      "I2C1": {
+        "type": "SDA",
+        "af": 0
+      }
+    }
+  },
+  "LED1": {
+    "port": "B",
+    "num": 6,
+    "in_addr": 1111523864,
+    "out_addr": 1111523992,
+    "functions": {
+      "TIM4": {
+        "type": "CH1",
+        "af": 0
+      },
+      "I2C1": {
+        "type": "SCL",
+        "af": 0
+      },
+      "USART1": {
+        "type": "TX",
+        "af": 0
+      }
+    }
+  },
+  "LED2": {
+    "port": "B",
+    "num": 7,
+    "in_addr": 1111523868,
+    "out_addr": 1111523996,
+    "functions": {
+      "TIM4": {
+        "type": "CH2",
+        "af": 0
+      },
+      "I2C1": {
+        "type": "SDA",
+        "af": 0
+      },
+      "USART1": {
+        "type": "RX",
+        "af": 0
+      }
+    }
+  }
+}

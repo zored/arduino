@@ -4,7 +4,7 @@ import {HttpRetriever} from "../_lib/std/HttpRetriever.ts"
 import {wrapLogs} from "../_lib/std/log.ts"
 
 const main = async () => {
-    const myWifi = new WiFi(WIFI_LOGIN, WIFI_PASSWORD)
+    const myWifi = WiFi.fromEnv()
     await wrapLogs(myWifi.connect(), 'connecting', 'connected')
     const myHttp = HttpRetriever.forActiveTransport()
     addGlobals({myWifi, myHttp})
