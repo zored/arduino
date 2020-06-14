@@ -36,7 +36,8 @@ export const intervals = async (ms: number[], f: (msIndex: number) => any, loops
     step(0, loops)
 })
 
-export const intervalsDetached = (a: [number[], () => any, number][]) =>
+export type IntervalsParams = [number[], () => any, number]
+export const intervalsDetached = (a: IntervalsParams[]) =>
     a.forEach(([ms, f, tries]) => intervals(ms, f, tries))
 
 export const retryOnThrow = async <T>(f: () => T, retries = 3, intervalMs = 1000): Promise<T> => {
