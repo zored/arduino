@@ -1,4 +1,4 @@
-import {retryOnThrowSync} from "../../std/intervals.ts"
+import {delay, retryOnThrow, retryOnThrowSync} from "../../std/intervals.ts"
 
 const AmperkaBarometer = require('@amperka/barometer')
 
@@ -8,20 +8,17 @@ export class PressureSensor {
     constructor(private getI2C: (bitrate: number) => I2C) {
     }
 
-    pressure = () => this.getClient().read('mmHg')
-    temperature = () => this.getClient().temperature('C')
+    pressure = async () => (await this.getClient()).read('mmHg')
+    temperature = async () => (await this.getClient()).temperature('C')
 
-    getClient = () => this.client = this.client ?? this.createClient()
+    getClient = async () => this.client = this.client ?? await this.createClient()
 
-    do = (f: (client: IAmperkaBarometer) => number) => retryOnThrowSync(() => f(this.createClient()))
+    do = (f: (client: IAmperkaBarometer) => number) => retryOnThrow(async () => f(await this.getClient()))
 
-    createClient = () => {
+    createClient = async () => {
         const client = AmperkaBarometer.connect({i2c: this.getI2C(400000)}) as IAmperkaBarometer
-        client.init()
-
-        // Skip wrong values:
-        client.read("mmHg")
-        client.temperature("C")
+        retryOnThrowSync(() => client.init(), 5)
+        await delay(1000)
 
         return client
     }

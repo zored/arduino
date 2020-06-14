@@ -9,8 +9,8 @@ export const getPressure = (storage: StorageClient, board: IskraJs): IntervalsPa
     return [
         min5,
         async () => {
-            const pressure = pressureSensor.pressure()
-            const temperature = pressureSensor.temperature()
+            const pressure = await pressureSensor.pressure()
+            const temperature = await pressureSensor.temperature()
             console.log({temperature, pressure})
             await storage.sendNumbers({temperature, pressure})
         },
