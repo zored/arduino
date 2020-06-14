@@ -10,6 +10,13 @@ export class IskraJs {
     private constructor(private pins = new PinContainer()) {
     }
 
+    getI2C() {
+        return function (bitrate: number) {
+            I2C1.setup({sda: SDA, scl: SCL, bitrate})
+            return I2C1
+        }
+    }
+
     getLed = (): Led =>
         this.led = this.led ??
             new Led(this.pins.output(B6))

@@ -1,5 +1,6 @@
 import {HttpRetriever} from "../std/HttpRetriever.ts"
 import {IskraJs} from "../pin/IskraJs.ts"
+import {retryOnThrow} from "../std/intervals.ts"
 
 const AmperkaWifi = require('@amperka/wifi')
 
@@ -25,7 +26,8 @@ export class WiFi {
 
         this.serial.setup(115200, {})
         const client = await this.createClient()
-        await this.authorize(client)
+
+        await retryOnThrow(() => this.authorize(client))
         HttpRetriever.setHasTransport()
         return this.client = client
     }

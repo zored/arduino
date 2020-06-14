@@ -17,7 +17,10 @@ export class Http {
         }
 
         const request = http.request(options, this.handleResponse(resolve))
-        request.on('error', (e: Error) => reject(e))
+        request.on('error', (e: Error) => {
+            console.log(e)
+            reject(e)
+        })
         request.end(content)
     })
 

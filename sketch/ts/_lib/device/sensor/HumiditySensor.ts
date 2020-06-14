@@ -7,7 +7,7 @@ export type ReadResult = {
     humidity: number
 }
 
-export class HumidityTemperatureSensor {
+export class HumiditySensor {
     private dht?: IDHT11
 
     constructor(private pin = P7) {

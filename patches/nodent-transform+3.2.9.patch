@@ -1,8 +1,26 @@
 diff --git a/node_modules/nodent-transform/arboriculture.js b/node_modules/nodent-transform/arboriculture.js
-index 3630ca7..13cda7a 100644
+index 3630ca7..a546108 100644
 --- a/node_modules/nodent-transform/arboriculture.js
 +++ b/node_modules/nodent-transform/arboriculture.js
-@@ -1473,11 +1473,11 @@ function asynchronize(pr, opts, logger, parsePart, printNode) {
+@@ -786,6 +786,17 @@ function asynchronize(pr, opts, logger, parsePart, printNode) {
+             } else {
+                 ref.parent[ref.field] = synthBlock;
+             }
++
++            const isFirst = ({type, $continuation}) => $continuation && type === 'FunctionDeclaration';
++            const isSecond = (v) => !isFirst(v);
++
++            synthBlock.body = synthBlock
++              .body
++              .filter(isFirst)
++              .concat(synthBlock
++                .body
++                .filter(isSecond)
++              )
+         }
+     }
+     
+@@ -1473,11 +1484,11 @@ function asynchronize(pr, opts, logger, parsePart, printNode) {
                      "body": body
                  }
              });
