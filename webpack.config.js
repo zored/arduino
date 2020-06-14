@@ -16,7 +16,7 @@ module.exports = {
       [
         'WIFI_LOGIN',
         'WIFI_PASSWORD',
-        'URL_ANIMATION',
+        'URL_STORAGE',
       ]
         .reduce((a, n) => {
           a[n] = JSON.stringify(process.env[n]);

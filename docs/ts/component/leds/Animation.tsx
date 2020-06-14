@@ -47,7 +47,7 @@ export const Animation = (p: AnimationProps) => {
 
         {animation.frames.map((frame, i) =>
             <Frame
-                key={`anim${i}_${frame.colors.join('')}`}
+                key={`anim${i}`}
                 color={color}
                 frame={frame}
                 onUpdate={f => setFrame(i, f)}

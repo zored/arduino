@@ -107,8 +107,8 @@ export class Espruino implements IFlasher {
       path,
       (await Deno.readTextFile(path))
         .replace(
-          /eval\("require"\)\("@amperka/g,
-          'require("@amperka',
+          /eval\("require"\)\("/g,
+          'require("',
         ),
     );
   };
