@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 module.exports = {
   entry: [
+    './sketch/ts/_config/array-fix.js',
     './sketch/ts/_config/object-fix.js',
     './sketch/ts/_config/promise-fix.js',
     './dist/index.js',

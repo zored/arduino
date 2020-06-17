@@ -9,7 +9,7 @@ export class InfraredTimeSensor {
     watch = (): () => Times => {
         let durations: number[] = []
         this.input.mode('input_pullup')
-        const id = setWatch(function (e) {
+        const id = setWatch(e => {
             const duration = 1000 * (e.time - e.lastTime)
             if (duration < 1000) {
                 durations.push(duration)
