@@ -1,11 +1,14 @@
+export type Times = number[]
+
 export class InfraredTimeSensor {
     constructor(
         private input: DigitalPin,
     ) {
     }
 
-    watch = () => {
+    watch = (): () => Times => {
         let durations: number[] = []
+        this.input.mode('input_pullup')
         const id = setWatch(function (e) {
             const duration = 1000 * (e.time - e.lastTime)
             if (duration < 1000) {
@@ -15,7 +18,7 @@ export class InfraredTimeSensor {
             durations = []
         }, this.input, {repeat: true})
 
-        return () => {
+        return (): Times => {
             clearWatch(id)
             return durations
         }

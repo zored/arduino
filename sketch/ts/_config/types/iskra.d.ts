@@ -6,9 +6,12 @@ declare var P6: AnalogPin
 declare var P7: DigitalPin
 declare var P8: AnalogPin
 declare var P12: Pin
-declare var A7: AnalogPin | SpiMosiPin
-declare var B6: Pin
+
 declare var A1: Pin
+declare var A3: AnalogPin
+declare var A7: AnalogPin | SpiMosiPin
+
+declare var B6: Pin
 declare var LED1: Pin
 declare var SDA: Pin
 declare var SCL: Pin
