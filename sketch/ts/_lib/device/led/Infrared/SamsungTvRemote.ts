@@ -3,12 +3,16 @@ import * as buttons from "./samsung.json"
 import {BitString} from "../../sensor/InfraredCodeSensor.ts"
 import {Times} from "../../sensor/InfraredTimeSensor.ts"
 
-export type Button = 'power' | 'volumeUp'
+export type Button = 'power' | 'volumeUp' | 'nextChannel' | 'hdmi'
 
 const codes: Record<Button, BitString> = {
     power: "111100000111000000100000010111111",
     volumeUp: "0111100000111000001101000000101111",
+    nextChannel: "",
+    hdmi: "",
 }
+
+const startMs = 12000;
 
 const lowMs = 1
 
@@ -20,8 +24,11 @@ export class SamsungTvRemote {
         new InfraredTransmitter(plus, minus)
     )
 
-    press = (button: Button): void => this.ir.send(this.timesFromCodes(button))
-    press2 = (button: Button): void => this.ir.send(this.timesFromRaw(button))
+    press = (button: Button, raw = true): void => this.ir.send(
+        raw
+            ? this.timesFromRaw(button)
+            : this.timesFromCodes(button)
+    )
 
     private timesFromCodes = (button: Button): Times => codes[button]
         .split('')
