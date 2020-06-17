@@ -1,5 +1,5 @@
-import {Point} from "../../shared/Point.ts"
-import {Color} from "../../shared/Color.ts"
+import {Point} from "../../../shared/Point.ts"
+import {Color} from "../../../shared/Color.ts"
 import {ILedsArtist} from "./ILedsArtist.ts"
 
 type Pixels = Uint8ClampedArray

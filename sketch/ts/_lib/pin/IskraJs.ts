@@ -1,5 +1,5 @@
 import {PinContainer} from "./PinContainer.ts"
-import {Led} from "../device/Led.ts"
+import {Led} from "../device/led/Led.ts"
 
 type Pins = Record<string, Pin>
 

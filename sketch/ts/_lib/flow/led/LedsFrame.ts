@@ -1,7 +1,7 @@
 import {IFrame} from "../../shared/data/animation/IFrame.ts"
 import {Point} from "../../shared/Point.ts"
 import {Color} from "../../shared/Color.ts"
-import {ILeds} from "../../device/leds/ILeds.ts"
+import {ILeds} from "../../device/led/leds/ILeds.ts"
 
 export class LedsFrame {
     constructor(private leds: ILeds) {

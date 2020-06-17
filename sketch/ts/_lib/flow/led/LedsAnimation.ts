@@ -1,8 +1,8 @@
 import {LedsFrame} from "./LedsFrame.ts"
 import {IAnimation} from "../../shared/data/animation/IAnimation.ts"
 import {intervals} from "../../std/intervals.ts"
-import {PinLeds} from "../../device/leds/PinLeds.ts"
-import {SpiLeds} from "../../device/leds/SpiLeds.ts"
+import {PinLeds} from "../../device/led/leds/PinLeds.ts"
+import {SpiLeds} from "../../device/led/leds/SpiLeds.ts"
 
 export class LedsAnimation {
     private version = 0
