@@ -29,7 +29,7 @@ export class SamsungTvRemote {
         new InfraredTransmitter(plus, minus)
     )
 
-    press = (button: Button, raw = true): void => this.ir.send(
+    press = (button: Button, raw = false): void => this.ir.send(
         raw
             ? this.timesFromRaw(button)
             : this.timesFromCodes(button)

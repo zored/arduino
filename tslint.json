@@ -10,6 +10,7 @@
     "no-var-requires": false,
     "semicolon": false,
     "no-empty-interface": false,
+    "no-bitwise": false,
     "only-arrow-functions": false
   },
   "rulesDirectory": []

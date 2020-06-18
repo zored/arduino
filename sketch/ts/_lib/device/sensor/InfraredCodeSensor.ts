@@ -13,11 +13,15 @@ export class InfraredCodeSensor {
     }
 
     getCode = () => {
-        this.listenOnce();
+        this.listenOnce()
         return new Promise(resolve => {
             const code = this.codeQueue.pop()
             if (code !== undefined) {
                 resolve(code)
+                return
+            }
+            if (this.resolvesQueue.length > 7) {
+                console.log('too many IR resolves')
                 return
             }
             this.resolvesQueue.push(resolve)
@@ -36,6 +40,11 @@ export class InfraredCodeSensor {
         const resolve = this.resolvesQueue.pop()
         if (resolve) {
             resolve(code)
+            return
+        }
+
+        if (this.codeQueue.length > 7) {
+            console.log('too many IR codes')
             return
         }
         this.codeQueue.push(code)

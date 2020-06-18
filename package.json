@@ -15,10 +15,11 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "patch-package",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {
     "@types/espruino": "^1.94.3",
+    "@types/jest": "^26.0.0",
     "@zeit/ncc": "^0.22.3",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -36,10 +37,12 @@
     "espruino": "^0.1.31",
     "ext": "^1.1.2",
     "fast-async": "^6.3.8",
+    "jest": "^26.0.1",
     "nodent-transform": "^3.2.9",
     "patch-package": "^6.2.2",
     "serialport": "^9.0.0",
     "symbol-es6": "^0.1.2",
+    "ts-jest": "^26.1.0",
     "tslint": "^6.1.2",
     "type": "^1.0.1",
     "typescript": "^3.9.5",

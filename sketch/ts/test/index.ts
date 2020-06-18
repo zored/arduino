@@ -1,4 +1,4 @@
-async function test() {
+async function tst() {
   // Block scoping
   const value = "is-outside";
   {
@@ -43,4 +43,4 @@ async function test() {
   await wait(2000);
   console.log(`After 2 seconds, promise results: ${a} ${b}`);
 }
-global.test = test;
+global.tst = tst;

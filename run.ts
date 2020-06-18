@@ -13,7 +13,7 @@ import { UnoFlasher } from "./deno/ino.ts";
 const fmt = async (args: CommandArgs) => {
   await sh(`deno fmt ${args.c ? "--check " : ""}./run.ts ./deno`);
   await sh(
-    `npx tslint -c tslint.json ./sketch/ts/**/*.ts${args.c ? "" : " --fix"}`,
+    `yarn tslint -c tslint.json ./sketch/ts/**/*.ts${args.c ? "" : " --fix"}`,
   );
 };
 
@@ -21,6 +21,7 @@ const gitHooks = new GitHooks({
   "pre-commit": async () => {
     await assertAllTracked();
     await fmt({ c: 1, _: [] });
+    await sh("yarn test");
   },
 });
 const hooks = (args: CommandArgs) => gitHooks.run(args);
