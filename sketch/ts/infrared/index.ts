@@ -20,6 +20,9 @@ const sensor = new InfraredCodeSensor(
 })()
 const r = () => console.log('no reset required')
 
+// noinspection JSIgnoredPromiseFromCall
+// tv.setVolume(5)
+
 addGlobals({
     p: (b: Button) => tv.press(b),
 })
