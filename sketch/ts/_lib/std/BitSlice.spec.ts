@@ -1,6 +1,6 @@
 import {BitSlice} from "./BitSlice"
 
-test(`bit slice`, () => {
+test(`BitSlice.toBools`, () => {
     for (let i = 0; i < 100; i++) {
         let byteString = ''
         const bools: boolean[] = []
@@ -10,7 +10,13 @@ test(`bit slice`, () => {
             byteString += active ? '1' : '0'
         }
         const bits = BitSlice.fromString(byteString)
-        expect([...bits.toBools()])
+        expect(bits.toBools())
             .toEqual(bools)
     }
+})
+test(`BitSlice.toNumbers`, () => {
+    const s = '0111100000111000001101000000101111'
+    const numbers = BitSlice.fromString(s).toNumbers()
+    expect(numbers).toEqual([3492551710, 3])
+    expect(BitSlice.fromNumbers(numbers, s.length).toString()).toEqual(s)
 })

@@ -99,14 +99,15 @@ export class Espruino implements IFlasher {
       ["dist/index.js", `dist/result_${name}.js`].map(removeIfExists),
     );
     await sh(`npx ncc build ./sketch/ts/${name}/index.ts`); // 👉 ./dist/index.js
+    const result = `result_${name}.js`;
     await sh(
-      `npx webpack --mode production --env.OUTPUT_FILENAME="result_${name}.js"`,
+      `npx webpack --mode production --env.OUTPUT_FILENAME="${result}"`,
     ); // 👉 ./dist/result_name.js
-    await this.replaceRequires();
+    await this.replaceRequires(result);
   };
 
-  private replaceRequires = async () => {
-    const path = await fromRoot("dist/result.js");
+  private replaceRequires = async (result: string) => {
+    const path = await fromRoot(`dist/${result}`);
     await Deno.writeTextFile(
       path,
       (await Deno.readTextFile(path))

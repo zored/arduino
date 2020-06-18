@@ -5,6 +5,7 @@ module.exports = env => ({
     './sketch/ts/_config/array-fix.js',
     './sketch/ts/_config/object-fix.js',
     './sketch/ts/_config/promise-fix.js',
+    './sketch/ts/_config/math-fix.js',
     './dist/index.js',
   ],
   output: {

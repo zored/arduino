@@ -1,13 +1,17 @@
 import {BitString} from "../device/sensor/InfraredCodeSensor"
 
 export class BitSlice {
-    private static readonly blockSize = 8
-    private readonly blocks: Uint8Array
+    private static readonly blockBytes = Uint32Array.BYTES_PER_ELEMENT
+    private static readonly blockSize = BitSlice.blockBytes * 8
+    private readonly blocks: Uint32Array
 
-    constructor(private readonly size: number) {
-        const capacity = Math.ceil(Math.log2(size))
+    constructor(public readonly size: number) {
+        let capacity = Math.ceil(Math.log2(size)) || 0
+        while (capacity % BitSlice.blockBytes !== 0) {
+            capacity++
+        }
         const buffer = new ArrayBuffer(capacity)
-        this.blocks = new Uint8Array(buffer)
+        this.blocks = new Uint32Array(buffer)
     }
 
     static fromString = (s: BitString) => {
@@ -16,11 +20,29 @@ export class BitSlice {
         return a
     }
 
-    * toBools(): IterableIterator<boolean> {
-        for (let i = 0; i < this.size; i++) {
-            yield this.get(i)
-        }
+    static fromNumbers(numbers: number[], size: number) {
+        const s = new BitSlice(size)
+        numbers.forEach((block, blockIndex) => {
+            for (let i = 0; i < BitSlice.blockSize; i++) {
+                const bitGlobalIndex = blockIndex * BitSlice.blockSize + i
+                const active = 0 !== (block & (1 << i))
+                s.set(bitGlobalIndex, active)
+            }
+        })
+        return s
     }
+
+    toBools() {
+        const bools: boolean[] = [];
+        for (let i = 0; i < this.size; i++) {
+            bools.push(this.get(i))
+        }
+        return bools
+    }
+
+    toNumbers = (): number[] => [...this.blocks].map(v => v)
+
+    toString = () => this.toBools().map(b => b ? '1' : '0').join('')
 
     private set(bitGlobalIndex: number, active: boolean): void {
         const {blockIndex, block, bit} = this.getBlock(bitGlobalIndex)
