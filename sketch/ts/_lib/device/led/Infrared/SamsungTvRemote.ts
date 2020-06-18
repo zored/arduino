@@ -12,9 +12,14 @@ const codes: Record<Button, BitString> = {
     hdmi: "",
 }
 
-const startMs = 12000;
+const startMs = 12000
 
-const lowMs = 1
+const firstMs = 4.6
+const secondMs = 4.5
+const longMs = 1.7
+const shortMs = 0.6
+const offsetMs = shortMs
+const lastMs = 50
 
 export class SamsungTvRemote {
     constructor(private ir: InfraredTransmitter) {
@@ -30,18 +35,21 @@ export class SamsungTvRemote {
             : this.timesFromCodes(button)
     )
 
-    private timesFromCodes = (button: Button): Times => codes[button]
-        .split('')
-        .flatMap((c): Times => [
-            this.getBitMs(c === '1'),
-            lowMs,
-        ])
+    private timesFromCodes = (button: Button): Times => [
+        firstMs,
+        ...codes[button]
+            .split('')
+            .flatMap((c, i): Times => [
+                c === '1'
+                    ? (i === 0 ? secondMs : longMs)
+                    : shortMs,
+                offsetMs,
+            ]),
+        lastMs,
+    ]
 
     private timesFromRaw = (button: Button): Times => this.buttons()[button]
 
     private buttons = (): Record<Button, Times> => buttons as any
 
-    private getBitMs = (v: boolean) => v
-        ? 1.6
-        : 0.5
 }

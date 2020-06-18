@@ -95,9 +95,13 @@ export class Espruino implements IFlasher {
     );
 
   build = async (name: string) => {
-    await removeIfExists("dist/index.js");
+    await Promise.all(
+      ["dist/index.js", `dist/result_${name}.js`].map(removeIfExists),
+    );
     await sh(`npx ncc build ./sketch/ts/${name}/index.ts`); // 👉 ./dist/index.js
-    await sh(`npx webpack --mode production`); // 👉 ./dist/result.js
+    await sh(
+      `npx webpack --mode production --env.OUTPUT_FILENAME="result_${name}.js"`,
+    ); // 👉 ./dist/result_name.js
     await this.replaceRequires();
   };
 

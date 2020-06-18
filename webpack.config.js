@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-module.exports = {
+module.exports = env => ({
   entry: [
     './sketch/ts/_config/array-fix.js',
     './sketch/ts/_config/object-fix.js',
@@ -9,7 +9,7 @@ module.exports = {
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'result.js',
+    filename: (env.OUTPUT_FILENAME || 'result.js'),
   },
   externals: (c, request, f) => /^(@amperka|http$)/.test(request) ? f(null, 'commonjs2 ' + request) : f(),
   plugins: [
@@ -50,4 +50,4 @@ module.exports = {
       },
     ],
   },
-};
+});
