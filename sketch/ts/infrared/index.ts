@@ -1,10 +1,10 @@
 import {IskraJs} from "../_lib/pin/IskraJs.ts"
 import {addGlobals} from "../_lib/std/addGlobals.ts"
-import {Button, SamsungTvRemote} from "../_lib/device/led/Infrared/SamsungTvRemote.ts"
+import {Button, Remote} from "../_lib/device/led/Infrared/Remote.ts"
 import {InfraredCodeSensor} from "../_lib/device/sensor/InfraredCodeSensor.ts"
 
 const board = IskraJs.instance
-const tv = SamsungTvRemote.forPins(
+const tv = Remote.forPins(
     board.getPin(A3),
     board.getPin(P6)
 );

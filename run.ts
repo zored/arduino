@@ -53,10 +53,36 @@ runCommands({
   tty: () => espruino.tty(),
   eval: ({ _: [code], wait }) => espruino.eval(code + "", wait + ""),
   list: async () => console.log((await espruino.ports()).join("\n")),
-  pins: async ({ _: [], f = "USART", t = "TX" }) => {
+  pins: async ({ _: [x], f = "USART", t = "TX" }) => {
     const pins: any = JSON.parse(
       await Deno.readTextFile("sketch/ts/_config/types/pins.json"),
     );
+
+    switch (x) {
+      case "uart":
+        console.log(
+          Object
+            .entries(pins)
+            .map(([pinId, pin]) => {
+              const [fnId, v] = Object
+                .entries((pin as any).functions)
+                .find(([n]) => n.match(/USART\d+/)) ?? [];
+              if (!v) {
+                return null;
+              }
+              return [pinId, fnId, (v as any).type];
+            })
+            .filter((v): v is [string, string, string] => v !== null)
+            .sort((a, b) => a[2].localeCompare(b[2]))
+            .reduce((a, [pin, fnId, type]) => {
+              const fn = a[fnId] ?? {};
+              fn[type] = pin;
+              a[fnId] = fn;
+              return a;
+            }, {} as Record<string, Record<string, string>>),
+        );
+        return;
+    }
     console.log(
       `Pins with function "${f}" and type "${t}".`,
       Object

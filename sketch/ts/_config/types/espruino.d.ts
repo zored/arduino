@@ -10,5 +10,4 @@ declare interface IHttpResponse {
     on(event: 'data', callback: (data: string) => void): void
 
     on(event: 'close', callback: () => void): void
-
 }

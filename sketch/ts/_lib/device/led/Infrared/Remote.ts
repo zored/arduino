@@ -1,19 +1,10 @@
 import {InfraredTransmitter} from "./InfraredTransmitter.ts"
-import * as buttons from "./samsung.json"
+import * as devices from "./devices.json"
 import {Times} from "../../sensor/InfraredTimeSensor.ts"
-import {BitString} from "../../sensor/InfraredCodeSensor.ts"
 import {delay} from "../../../std/intervals.ts"
+import {BitString} from "../../sensor/InfraredCodeSensor.ts"
 
-export type Button = 'power' | 'volumeUp' | 'volumeDown' | 'nextChannel' | 'hdmi' | 'prevChannel'
-
-const codes: Record<Button, BitString> = {
-    power: "111100000111000000100000010111111",
-    volumeUp: "111100000111000001110000000011111",
-    volumeDown: "111100000111000001101000000101111",
-    nextChannel: "111100000111000000100100010110111",
-    prevChannel: "111100000111000000000100011110111",
-    hdmi: "11110000011100000110100010010111",
-}
+export type Button = string
 
 const startMs = 12000
 
@@ -27,11 +18,16 @@ const lastMs = 50
 const maxVolume = 20
 const pressInterval = lastMs
 
-export class SamsungTvRemote {
-    constructor(private ir: InfraredTransmitter) {
+type Codes = Record<Button, BitString>
+
+export class Remote {
+    private codesByButton: Codes
+
+    constructor(private ir: InfraredTransmitter, name: string = 'samsungTv') {
+        this.codesByButton = (devices as any)[name] as Codes
     }
 
-    static forPins = (plus: AnalogPin, minus: DigitalPin) => new SamsungTvRemote(
+    static forPins = (plus: AnalogPin, minus: DigitalPin) => new Remote(
         new InfraredTransmitter(plus, minus)
     )
 
@@ -64,7 +60,7 @@ export class SamsungTvRemote {
         [firstMs, ...this.getTimes(button), lastMs]
 
     private getTimes(button: Button) {
-        const times = codes[button]
+        const times = this.codesByButton[button]
             .split('')
             .flatMap((active): Times => [
                 active === '1' ? defaultLongMs : shortMs,
