@@ -1,6 +1,6 @@
 import {
   Runner,
-} from "https://raw.githubusercontent.com/zored/deno/v0.0.28/mod.ts";
+} from "https://raw.githubusercontent.com/zored/deno/v0.0.84/mod.ts";
 import { IFlasher, Port, SketchPath } from "./all.ts";
 const { mkdir, writeTextFile, lstat } = Deno;
 

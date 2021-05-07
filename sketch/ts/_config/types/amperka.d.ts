@@ -51,6 +51,14 @@ declare interface IAmperkaBarometer {
     init(): void
 }
 
+declare interface IBluetooth {
+    mode(m: 'slave'|'master', f: () => void):void
+    firmware(f: (version: string) => void):void
+    on(e:'data'|'error', f: (d: string) => void): void
+    name(v:string, f: (d: string) => void): void
+    password(v:string|undefined, f: (d: string) => void): void
+
+}
 declare interface AmperkaLedStripFactory {
     connect(spi: SPI, length: number, type: string): ILedStrip
 }

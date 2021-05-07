@@ -73,6 +73,6 @@ export class Remote {
 
     private timesFromRaw = (button: Button): Times => this.buttons()[button]
 
-    private buttons = (): Record<Button, Times> => buttons as any
+    private buttons = (): Record<Button, Times> => this.codesByButton as any
 
 }

@@ -2,6 +2,7 @@
 declare var P1: AnalogPin
 declare var P3: AnalogPin | SpiMosiPin
 declare var P4: DigitalPin | SpiMosiPin
+declare var P5: Pin
 declare var P6: AnalogPin
 declare var P7: DigitalPin
 declare var P8: AnalogPin

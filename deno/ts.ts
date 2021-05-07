@@ -1,4 +1,4 @@
-import { __, exec, sh, shOut, parseDuration } from "../deps.ts";
+import { __, exec, parseDuration, sh, shOut } from "../deps.ts";
 import { fromRoot, IFlasher, Port, SketchPath } from "./all.ts";
 import { delay } from "../sketch/ts/_lib/std/intervals.ts";
 
@@ -49,6 +49,7 @@ export class Espruino implements IFlasher {
   ): Promise<void> {
     if (buildName) {
       await this.build(buildName);
+      path = this.getResultPath(buildName);
     }
     // noinspection ES6MissingAwait (flash requires open tty)
     this.tty(port);
@@ -84,6 +85,8 @@ export class Espruino implements IFlasher {
     return jobPath;
   };
 
+  private getResultPath = (name: string) => `dist/result_${name}.js`;
+
   private list = () => this.run("--list --no-ble");
 
   private run = async (
@@ -96,7 +99,7 @@ export class Espruino implements IFlasher {
 
   build = async (name: string) => {
     await Promise.all(
-      ["dist/index.js", `dist/result_${name}.js`].map(removeIfExists),
+      ["dist/index.js", this.getResultPath(name)].map(removeIfExists),
     );
     await sh(`npx ncc build ./sketch/ts/${name}/index.ts`); // 👉 ./dist/index.js
     const result = `result_${name}.js`;

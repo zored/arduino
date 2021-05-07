@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-write --allow-read --allow-net --allow-run
+#!/usr/bin/env -S deno run -A --no-check
 import {
   assertAllTracked,
   CommandArgs,
@@ -32,7 +32,7 @@ runCommands({
   fmt,
   hooks,
   flash: async ({
-    _: [path = './dist/result.js'],
+    _: [path = "./dist/result.js"],
     persist,
     build,
     port,
