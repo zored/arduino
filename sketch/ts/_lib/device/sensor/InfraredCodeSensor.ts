@@ -28,6 +28,13 @@ export class InfraredCodeSensor {
         })
     }
 
+    async debug(total = 999) {
+        console.log(`waiting for ${total} codes...`)
+        for (let i = 0; i < total; i++) {
+            console.log({code: await this.getCode()})
+        }
+    }
+
     private listenOnce = () => {
         if (this.listening) {
             return

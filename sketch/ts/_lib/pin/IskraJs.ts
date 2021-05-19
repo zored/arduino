@@ -21,7 +21,7 @@ export class IskraJs {
         this.led = this.led ??
             new Led(this.pins.output(B6))
 
-    getPin = <T extends Pin>(pin: T): T => this.pins.output(pin)
+    getPin = <T extends Pin>(pin: T, input = false): T => input ? this.pins.input(pin) : this.pins.output(pin)
 
     allPins = () => ({
         ...this.getPinsP(),

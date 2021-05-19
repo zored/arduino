@@ -1,9 +1,14 @@
-import { __, exec, parseDuration, sh, shOut } from "../deps.ts";
+import { __, exec, parseDuration, sh as doSh, shOut } from "../deps.ts";
 import { fromRoot, IFlasher, Port, SketchPath } from "./all.ts";
 import { delay } from "../sketch/ts/_lib/std/intervals.ts";
 
 const { readTextFile, writeTextFile, realPath, remove } = Deno;
 const { __dirname } = __(import.meta);
+
+async function sh(command: string) {
+  console.error({ command });
+  await doSh(command);
+}
 
 interface IJobPort {
   type: "path";
@@ -94,7 +99,10 @@ export class Espruino implements IFlasher {
     showProgress = false,
   ): Promise<void | string> =>
     await (showProgress ? sh : shOut)(
-      log((await fromRoot("/node_modules/.bin/espruino")) + " " + args),
+      log(
+        (await fromRoot("/node_modules/espruino/bin/espruino-cli.js")) + " " +
+          args,
+      ),
     );
 
   build = async (name: string) => {

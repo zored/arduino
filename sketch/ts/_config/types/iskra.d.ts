@@ -1,5 +1,6 @@
 
 declare var P1: AnalogPin
+declare var P2: AnalogPin
 declare var P3: AnalogPin | SpiMosiPin
 declare var P4: DigitalPin | SpiMosiPin
 declare var P5: Pin
