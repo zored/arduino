@@ -7,7 +7,7 @@ type Pixels = Uint8ClampedArray
 export class PinLedsArtist implements ILedsArtist {
     private pixels: Pixels
 
-    constructor(private side = 4, private brightness = 0.01) {
+    constructor(private side = 4, private brightness = 0.1) {
         this.pixels = this.createPixels()
     }
 

@@ -1,6 +1,7 @@
 import {IAnimation} from "../../shared/data/animation/IAnimation.ts"
 import {LedsAnimation} from "./LedsAnimation.ts"
 import {StorageClient} from "../client/StorageClient.ts"
+import {LedsFrame} from "./LedsFrame"
 
 export class LedsHttpAnimation {
     constructor(
@@ -10,7 +11,7 @@ export class LedsHttpAnimation {
     ) {
     }
 
-    static forPin = (pin: SpiMosiPin) => new LedsHttpAnimation(LedsAnimation.forPin(pin))
+    static forPin = (pin: SpiMosiPin) => new LedsHttpAnimation(new LedsAnimation(LedsFrame.forPin(pin)))
 
     load = async (loops = Infinity) => {
         for (; loops > 0; loops--) {

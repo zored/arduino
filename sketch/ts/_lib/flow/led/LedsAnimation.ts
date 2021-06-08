@@ -1,17 +1,12 @@
 import {LedsFrame} from "./LedsFrame.ts"
 import {IAnimation} from "../../shared/data/animation/IAnimation.ts"
 import {intervals} from "../../std/intervals.ts"
-import {PinLeds} from "../../device/led/leds/PinLeds.ts"
-import {SpiLeds} from "../../device/led/leds/SpiLeds.ts"
 
 export class LedsAnimation {
     private version = 0
 
-    private constructor(private readonly frame: LedsFrame) {
+    constructor(private readonly frame: LedsFrame) {
     }
-
-    static forPin = (pin: SpiMosiPin) => new LedsAnimation(new LedsFrame(new PinLeds(pin)))
-    static forSPI = (spi: SPI) => new LedsAnimation(new LedsFrame(SpiLeds.forSPI(spi)))
 
     run = async (animation: IAnimation, loops = Infinity) => {
         this.version++
